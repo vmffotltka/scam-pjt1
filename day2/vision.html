@@ -33,8 +33,13 @@
             --text-main: #ffffff; --text-dim: #a3a3a3;
             --border-light: #333333; --border-highlight: #555555;
         }
-        body { cursor: crosshair; background-color: var(--bg-body); color: var(--text-main); transition: background-color 0.3s, color 0.3s; }
-        .interactive:hover { cursor: pointer; }
+        body { 
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><text y="24" font-size="24">🏃</text></svg>') 16 16, auto; 
+            background-color: var(--bg-body); color: var(--text-main); transition: background-color 0.3s, color 0.3s; 
+        }
+        .interactive:hover { 
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><text y="24" font-size="24">👆</text></svg>') 16 16, pointer; 
+        }
         
         .scouting-locked .scouting-content { filter: blur(8px); opacity: 0.4; pointer-events: none; user-select: none; }
         .scouting-content { transition: filter 0.8s ease, opacity 0.8s ease; }
@@ -54,7 +59,7 @@
             <button id="theme-toggle" class="interactive text-textDim hover:text-textMain text-xl">🌙</button>
         </div>
     </nav>
-    <div id="scroll-progress" class="fixed top-[60px] left-0 h-1 bg-excellent z-50 transition-all duration-100" style="width: 0%;"></div>
+    <div id="scroll-progress" class="fixed top-0 left-0 h-1.5 bg-excellent z-[100] transition-all duration-100 shadow-[0_0_10px_#4ade80]" style="width: 0%;"></div>
 
     <main class="mt-24 mb-12 max-w-4xl w-full mx-auto flex flex-col gap-6 px-4 z-10 relative">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -104,8 +109,8 @@
                         <span class="text-sm text-textDim">"왜?"라는 질문을 즐기는 토론형 개발자. 문제 해결 후 코드를 반드시 복기하며 소통을 통해 성장함.</span>
                     </div>
                     <div>
-                        <strong class="text-textMain text-lg block mb-1">피아노 (예술적 감각)</strong>
-                        <span class="text-sm text-textDim">6세부터 다져온 섬세함. 그 감각이 코드의 가독성과 아키텍처 설계에 녹아있음.</span>
+                        <strong class="text-textMain text-lg block mb-1">음악 감상 & 피아노 (소소한 취미)</strong>
+                        <span class="text-sm text-textDim">6세부터 꾸준히 쳐온 피아노. 다양한 장르의 음악 감상과 피아노 연주를 통해 일상의 스트레스를 풀고 재충전의 시간을 가짐.</span>
                     </div>
                     <div class="mt-2 text-xs text-excellent font-bold tracking-widest text-right">[ SCOUTING COMPLETE ]</div>
                 </div>
@@ -140,17 +145,24 @@
         // Particles
         const canvasP = document.getElementById('particles'); const ctxP = canvasP.getContext('2d');
         canvasP.width = window.innerWidth; canvasP.height = window.innerHeight;
-        let particles = Array.from({length: 40}, () => ({x: Math.random()*canvasP.width, y: Math.random()*canvasP.height, vx: (Math.random()-0.5)*0.5, vy: (Math.random()-0.5)*0.5}));
+        let particles = Array.from({length: 80}, () => ({x: Math.random()*canvasP.width, y: Math.random()*canvasP.height, vx: (Math.random()-0.5)*0.5, vy: (Math.random()-0.5)*0.5}));
         function animateP() {
             ctxP.clearRect(0, 0, canvasP.width, canvasP.height);
             const isDark = document.documentElement.classList.contains('dark');
-            ctxP.fillStyle = isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.3)'; ctxP.strokeStyle = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)';
+            ctxP.fillStyle = isDark ? 'rgba(255,255,255,0.9)' : 'rgba(0,0,0,0.8)'; 
+            ctxP.strokeStyle = isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.4)';
             particles.forEach((p, i) => {
                 p.x += p.vx; p.y += p.vy; if(p.x < 0 || p.x > canvasP.width) p.vx *= -1; if(p.y < 0 || p.y > canvasP.height) p.vy *= -1;
-                ctxP.beginPath(); ctxP.arc(p.x, p.y, 2, 0, Math.PI*2); ctxP.fill();
+                ctxP.beginPath(); ctxP.arc(p.x, p.y, 3.5, 0, Math.PI*2); ctxP.fill();
                 for(let j=i+1; j<particles.length; j++) {
                     let dist = Math.sqrt(Math.pow(p.x-particles[j].x, 2) + Math.pow(p.y-particles[j].y, 2));
-                    if(dist < 100) { ctxP.beginPath(); ctxP.moveTo(p.x, p.y); ctxP.lineTo(particles[j].x, particles[j].y); ctxP.stroke(); }
+                    if(dist < 150) { 
+                        ctxP.beginPath(); 
+                        ctxP.lineWidth = 1.2;
+                        ctxP.moveTo(p.x, p.y); 
+                        ctxP.lineTo(particles[j].x, particles[j].y); 
+                        ctxP.stroke(); 
+                    }
                 }
             }); requestAnimationFrame(animateP);
         } animateP();
