@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>유현서 - Player Profile</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-body: #0a0a0a;
+            --bg-card: #121212;
+            --bg-card-hover: #1a1a1a;
+            --text-main: #ffffff;
+            --text-dim: #a3a3a3;
+            --border-light: #333333;
+            --border-highlight: #555555;
+            --accent-color: #ffffff;
+            --morale-excellent: #4ade80; 
+            
+            /* 주발 능력치 및 포지션 숙련도 컬러 (강발/자연스러움=초록, 약발/능숙함=노랑) */
+            --foot-strong: #dc2626; 
+            --foot-weak: #facc15;   
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* 발표(프로젝터) 환경을 고려하여 가로 폭을 대폭 확장 */
+        .dashboard-container {
+            width: 100%;
+            max-width: 1280px; 
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dashboard-header {
+            background-color: #000000;
+            padding: 15px 25px;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dashboard-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: var(--text-dim);
+        }
+
+        /* 좌측 프로필 고정 너비, 우측 스탯 영역 확장 */
+        .dashboard-content {
+            display: grid;
+            grid-template-columns: 420px 1fr;
+            gap: 1px;
+            background-color: var(--border-light);
+        }
+
+        .profile-panel, .stats-panel {
+            background-color: var(--bg-card);
+            padding: 30px;
+        }
+
+        .profile-header-container {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            margin-bottom: 20px;
+        }
+
+        .profile-image-box {
+            width: 110px;
+            height: 110px;
+            border-radius: 8px;
+            border: 2px solid var(--border-light);
+            overflow: hidden;
+            background-color: #000;
+            flex-shrink: 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            position: relative;
+        }
+
+        .profile-image-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%); 
+            transition: filter 0.4s ease, transform 0.4s ease;
+            cursor: pointer;
+        }
+        
+        .profile-image-box:hover img {
+            filter: grayscale(0%);
+            transform: scale(1.05);
+        }
+
+        .profile-name {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 2px;
+            line-height: 1.2;
+        }
+
+        .profile-name-en {
+            font-size: 1rem;
+            color: var(--text-dim);
+            margin-bottom: 15px;
+        }
+
+        .profile-badges {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            background-color: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--text-dim);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .profile-details {
+            border-top: 2px solid var(--border-light);
+            padding-top: 20px;
+        }
+
+        .detail-row {
+            display: flex;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-light);
+            align-items: center;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            flex: 1;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .detail-value {
+            flex: 2;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .foot-ability-container {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .foot-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .foot-lang {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            font-weight: 600;
+        }
+
+        .foot-score {
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .condition-bar-container {
+            width: 100%;
+            height: 6px;
+            background-color: #333;
+            border-radius: 3px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+
+        .condition-bar {
+            height: 100%;
+            background-color: var(--morale-excellent);
+            width: 85%;
+            border-radius: 3px;
+        }
+
+        .traits-list {
+            list-style-type: disc; 
+            padding-left: 15px; 
+            font-size: 0.85rem; 
+            color: var(--text-main);
+            margin-top: 2px;
+        }
+
+        .traits-list li {
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+
+        .hidden-trait-btn {
+            background-color: transparent;
+            color: var(--text-dim);
+            border: 1px solid var(--border-light);
+            padding: 5px 12px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .hidden-trait-btn:hover {
+            background-color: var(--text-main);
+            color: var(--bg-body);
+            border-color: var(--text-main);
+        }
+
+        #text-hidden-trait {
+            display: none;
+            margin-top: 8px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            background-color: #000;
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 3px solid var(--border-highlight);
+        }
+
+        .hidden-item-title {
+            color: var(--text-dim);
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .panel-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-left: 4px solid var(--accent-color);
+            padding-left: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* 발표 화면용 우측 스탯 2x2 그리드 배열 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .stat-card {
+            background-color: var(--bg-body);
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--border-highlight);
+            background-color: var(--bg-card-hover);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .stat-card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stat-card-title::after {
+            content: 'VIEW DETAILS +';
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            font-weight: 500;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .stat-card:hover .stat-card-title::after {
+            opacity: 1;
+        }
+
+        .tactical-container {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex: 1;
+        }
+
+        .pitch-graphic {
+            width: 90px;
+            height: 130px;
+            border: 2px solid var(--border-highlight);
+            border-radius: 4px;
+            position: relative;
+            background-color: #0f172a; 
+            flex-shrink: 0;
+        }
+        
+        .pitch-graphic::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background-color: rgba(255,255,255,0.2);
+        }
+        .pitch-graphic::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 30px;
+            height: 30px;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+        }
+
+        .pos-dot {
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .pos-label {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+
+        .tactical-info {
+            flex: 1;
+        }
+
+        .info-row {
+            margin-bottom: 10px;
+        }
+        
+        .info-title {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-bottom: 5px;
+        }
+
+        .position-history {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+
+        .radar-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            flex: 1;
+            pointer-events: none;
+        }
+
+        .keyword-box {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            flex: 1;
+            align-items: flex-start;
+            align-content: flex-start;
+        }
+
+        .keyword {
+            background-color: #1a1a1a;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            border: 1px solid var(--border-light);
+            color: var(--text-dim);
+        }
+
+        .stat-card:hover .keyword {
+            color: var(--text-main);
+            border-color: var(--border-highlight);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-light);
+            width: 90%;
+            max-width: 500px;
+            padding: 30px;
+            border-radius: 8px;
+            position: relative;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.9);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover {
+            color: var(--text-main);
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .modal-body {
+            color: var(--text-dim);
+            line-height: 1.7;
+            font-size: 0.95rem;
+        }
+        
+        .modal-body strong {
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        @media (max-width: 992px) {
+            .dashboard-content {
+                grid-template-columns: 1fr;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .profile-panel, .stats-panel {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <main class="dashboard-container">
+        <header class="dashboard-header">
+            <div class="dashboard-title">SCOUTING REPORT / PLAYER PROFILE</div>
+            <div class="dashboard-title" style="color: var(--text-main);">I AM</div>
+        </header>
+
+        <div class="dashboard-content">
+            <!-- 좌측 패널: 선수 기본 프로필 -->
+            <section class="profile-panel">
+                <div class="profile-header">
+                    <div class="profile-header-container">
+                        <div class="profile-image-box" title="마우스를 올려보세요">
+                            <img src="https://placehold.co/150x150/1a1a1a/ffffff?text=Photo" alt="Profile Picture">
+                        </div>
+                        <div class="profile-title-box">
+                            <h1 class="profile-name">유현서</h1>
+                            <div class="profile-name-en">Yoo Hyun-seo</div>
+                            <div class="profile-badges">
+                                <span class="badge">SSAFY 16th</span>
+                                <span class="badge">Seoul 10th Class</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-details">
+                    <div class="detail-row">
+                        <div class="detail-label">신상 정보</div>
+                        <div class="detail-value">2000.04.06 (만 26세)<br><span style="font-size:0.85rem; color:var(--text-dim);">179cm / 85kg</span></div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">학력</div>
+                        <div class="detail-value">한성대학교 컴퓨터공학부 졸업<br><span style="font-size:0.85rem; color:var(--text-dim);">(GPA 3.52 / 4.5)</span></div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">포지션 (목표)</div>
+                        <div class="detail-value">서비스 기업 백엔드 개발자<br><span style="font-size:0.85rem; color:var(--text-dim);">(Backend Developer)</span></div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">성격 (Personality)</div>
+                        <div class="detail-value">결단력 있음 (Resolute)<br><span style="font-size:0.85rem; color:var(--text-dim);">논리적 토의를 바탕으로 확고한 주관 확립</span></div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">예상 몸값 (가치)</div>
+                        <div class="detail-value" style="font-weight: 700;">
+                            자유계약 <br><span style="font-size:0.85rem; color:var(--text-dim); font-weight:500;">(FA - 이적료 없음, 즉시 합류 가능)</span>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <div class="detail-label">주력 도구 (양발)</div>
+                        <div class="detail-value">
+                            <div class="foot-ability-container">
+                                <!-- 왼발 (C++) - 약발 15 -->
+                                <div class="foot-item">
+                                    <span class="foot-lang">C++</span>
+                                    <svg viewBox="0 0 30 50" width="22" height="38">
+                                        <path d="M15,5 C10,5 5,15 5,30 C5,40 10,48 18,48 C25,48 25,35 25,25 C25,12 22,5 15,5 Z" 
+                                              fill="var(--foot-weak)" stroke="#000" stroke-width="2"/>
+                                    </svg>
+                                    <span class="foot-score" style="color: var(--foot-weak);">15 <span style="font-size:0.7rem; color:var(--text-dim); font-weight:400;">(서브/왼발)</span></span>
+                                </div>
+                                <!-- 오른발 (Java) - 강발 20 (Java 텍스트 강조) -->
+                                <div class="foot-item">
+                                    <span class="foot-lang" style="color: #ffffff; font-weight: 700;">Java</span>
+                                    <svg viewBox="0 0 30 50" width="22" height="38">
+                                        <path d="M15,5 C20,5 25,15 25,30 C25,40 20,48 12,48 C5,48 5,35 5,25 C5,12 8,5 15,5 Z" 
+                                              fill="var(--foot-strong)" stroke="#000" stroke-width="2"/>
+                                    </svg>
+                                    <span class="foot-score" style="color: var(--foot-strong);">20 <span style="font-size:0.7rem; color:var(--text-dim); font-weight:400;">(메인/오른발)</span></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detail-row">
+                        <div class="detail-label">상태 (Condition)</div>
+                        <div class="detail-value">
+                            체력: 85% (조기 기상 여파)
+                            <div class="condition-bar-container"><div class="condition-bar"></div></div>
+                            <div style="margin-top: 4px;">사기: <span style="color: var(--morale-excellent); font-weight: 700;">최상 🟢</span> (프로젝트 기대감)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <div class="detail-label">선호 플레이<br><span style="font-size:0.75rem; font-weight:400;">(Player Traits)</span></div>
+                        <div class="detail-value">
+                            <ul class="traits-list">
+                                <li>새로운 기술 및 아키텍처 튜토리얼을 보면 일단 적용해 봄</li>
+                                <li>내장 라이브러리를 극한으로 활용하여 간결하고 가독성 높은 코드를 작성함</li>
+                                <li>문제 해결 시 동료에게 "왜?"라는 질문을 던지며 논리적 토의를 즐김</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <div class="detail-label">히든 특성</div>
+                        <div class="detail-value">
+                            <button id="btn-hidden-trait" class="hidden-trait-btn">[ 스카우터 리포트 열람 ]</button>
+                            <div id="text-hidden-trait">
+                                <span class="hidden-item-title"># 겉으로 드러나지 않는 플레이어의 성향</span>
+                                <strong>피아노 (폼 하락 중)</strong><br>
+                                <span style="font-size:0.8rem; color:#888;">- 6살 때부터 시작했으나 현재는 폼이 떨어짐. 하지만 예술적 감각은 코드 설계에 잔존.</span><br><br>
+                                <strong>성장 갈증 (Adaptability & Ambition)</strong><br>
+                                <span style="font-size:0.8rem; color:#888;">- 정답 여부를 떠나 토의하고 결론을 도출하는 과정 자체에서 폭발적으로 성장함.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="stats-panel">
+                <h2 class="panel-title">Attributes <span style="font-size:0.8rem; font-weight:400; color:var(--text-dim); border:none;">(Click Cards to view detail)</span></h2>
+
+                <!-- 넓은 가로 화면을 활용하기 위한 2x2 Grid 배치 -->
+                <div class="stats-grid">
+                    
+                    <!-- Tactical & Role Card -->
+                    <article class="stat-card" data-modal-target="modal-tactical">
+                        <h3 class="stat-card-title">Tactical & Role Evolution</h3>
+                        <div class="tactical-container">
+                            <div class="pitch-graphic">
+                                <!-- 프론트엔드 (노란색 - 능숙함/Accomplished) - CM 위치 -->
+                                <div class="pos-dot" style="top: 45%; background-color: var(--foot-weak); box-shadow: 0 0 8px var(--foot-weak);"></div>
+                                <div class="pos-label" style="top: 54%; color: var(--foot-weak); font-size: 0.55rem;">FRONTEND</div>
+                                
+                                <!-- 백엔드 (초록색 - 자연스러움/Natural) - DM 위치 -->
+                                <div class="pos-dot" style="top: 75%; background-color: var(--morale-excellent); box-shadow: 0 0 10px var(--morale-excellent);"></div>
+                                <div class="pos-label" style="top: 86%; color: var(--morale-excellent); font-size: 0.65rem;">BACKEND</div>
+                            </div>
+                            <div class="tactical-info">
+                                <div class="info-row">
+                                    <span class="info-title">개발 생태계에서의 포지션 진화 (Role History)</span>
+                                    <div class="position-history">
+                                        <span class="badge" style="border-color: #555; color: #a3a3a3;" title="첫 프로젝트">Back & Front</span>
+                                        <span style="color: #555; font-size: 0.8rem;">▶</span>
+                                        <span class="badge" style="border-color: #888; color: #ccc;" title="두 번째 프로젝트">Back (sub: Front)</span>
+                                        <span style="color: #555; font-size: 0.8rem;">▶</span>
+                                        <span class="badge" style="border-color: var(--morale-excellent); color: var(--morale-excellent); background-color: rgba(74, 222, 128, 0.1);" title="세 번째 프로젝트 ~ 현재">Pure Backend</span>
+                                    </div>
+                                    <div style="margin-top: 10px; font-size: 0.8rem; color: var(--text-dim);">
+                                        👉 프로젝트를 거듭하며 '전문 백엔드 개발자'로 포지션 완벽 적응
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Technical Stat Card -->
+                    <article class="stat-card" data-modal-target="modal-tech">
+                        <h3 class="stat-card-title">Technical & Algorithm</h3>
+                        <div class="radar-container">
+                            <canvas id="techRadarCanvas" width="280" height="220"></canvas>
+                        </div>
+                    </article>
+
+                    <!-- Mental Stat Card -->
+                    <article class="stat-card" data-modal-target="modal-mental">
+                        <h3 class="stat-card-title">Mental & Vision</h3>
+                        <div class="keyword-box">
+                            <span class="keyword">체스</span>
+                            <span class="keyword">직관</span>
+                            <span class="keyword">복기</span>
+                        </div>
+                    </article>
+
+                    <!-- Physical Stat Card -->
+                    <article class="stat-card" data-modal-target="modal-physical">
+                        <h3 class="stat-card-title">Physical & Goal</h3>
+                        <div class="keyword-box">
+                            <span class="keyword">주 6일 맨몸운동</span>
+                            <span class="keyword">성실함의 증명</span>
+                        </div>
+                    </article>
+
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Modal: Tactical -->
+    <div class="modal-overlay" id="modal-tactical">
+        <div class="modal-content">
+            <button class="modal-close">&times;</button>
+            <h3 class="modal-title">Tactical Details (프로젝트 이력)</h3>
+            <p class="modal-body">
+                <strong>[ 가장 기억에 남는 프로젝트: LLM 기반 교육 보조 프로그램 ]</strong><br><br>
+                알고리즘 소모임 수상하던 해 참가한 공모전 프로젝트입니다. 사용자가 제공한 자료를 바탕으로 LLM이 객관식 및 주관식 모의고사를 생성해주는 서비스였습니다.<br><br>
+                결과는 <strong>27팀 중 5등(우수상)</strong>이었지만, 급하게 만들다 보니 기술적 완성도에 아쉬움이 남았습니다. <br><br>
+                하지만 이 경험을 계기로 '작동만 하는 코드'를 넘어 <strong>'유지보수와 성능을 고려한 견고한 백엔드 아키텍처'</strong>에 대한 갈증과 고민을 본격적으로 시작하게 되었습니다.
+            </p>
+        </div>
+    </div>
+
+    <!-- Modal: Technical -->
+    <div class="modal-overlay" id="modal-tech">
+        <div class="modal-content">
+            <button class="modal-close">&times;</button>
+            <h3 class="modal-title">Technical & Algorithm Detail</h3>
+            <p class="modal-body">
+                알고리즘 문제 해결을 매우 즐깁니다. 교내에서 <strong>알고리즘 소모임을 직접 창설</strong>하여 팀원들과 함께 스터디를 주도했습니다.<br><br>
+                그 결과 <strong>2024 HSUPC(한성대 프로그래밍 경진대회)에서 당당히 1등</strong>을 차지했으며, 함께한 스터디 팀원 역시 2등을 수상하는 쾌거를 이루어냈습니다.<br><br>
+                단순한 문제 풀이를 넘어, 최근에는 <strong>데이터베이스 최적화</strong>에 큰 흥미를 느끼며 서비스의 안정성과 성능을 깊이 있게 고민하는 견고한 백엔드 개발자로 성장 중입니다.
+            </p>
+        </div>
+    </div>
+
+    <!-- Modal: Mental -->
+    <div class="modal-overlay" id="modal-mental">
+        <div class="modal-content">
+            <button class="modal-close">&times;</button>
+            <h3 class="modal-title">Mental & Vision Detail</h3>
+            <p class="modal-body">
+                2년 넘게 꾸준히 체스(주력 오프닝: e4)를 즐기고 있습니다.<br><br>가장 좋아하는 선수 '히카루 나카무라'의 <strong>"아무리 훌륭한 선수라도 복기하지 않으면 발전이 없다"</strong>는 철학을 개발에도 적용합니다.<br><br>직관적인 문제 해결 후에는 반드시 코드를 복기하며 어제의 나보다 발전하려 노력합니다.
+            </p>
+        </div>
+    </div>
+
+    <!-- Modal: Physical -->
+    <div class="modal-overlay" id="modal-physical">
+        <div class="modal-content">
+            <button class="modal-close">&times;</button>
+            <h3 class="modal-title">Physical & Goal Detail</h3>
+            <p class="modal-body">
+                매일 30분씩 주 6일, 푸시업과 스쿼트를 꾸준히 하고 있습니다.<br><br>현재 퀘스트는 데드행과 숄더패킹을 마스터하여 <strong>'정자세 풀업 1개'를 성공</strong>하는 것입니다.<br><br>끈기와 체력은 백엔드 개발자의 필수 소양이라고 생각합니다.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            const statCards = document.querySelectorAll('.stat-card');
+            const modals = document.querySelectorAll('.modal-overlay');
+            const closeBtns = document.querySelectorAll('.modal-close');
+
+            // 모달 열기 로직
+            statCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const targetId = card.getAttribute('data-modal-target');
+                    const targetModal = document.getElementById(targetId);
+                    if(targetModal) {
+                        targetModal.classList.add('active');
+                    }
+                });
+            });
+
+            // 모달 닫기 로직 (X 버튼)
+            closeBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    btn.closest('.modal-overlay').classList.remove('active');
+                });
+            });
+
+            // 모달 닫기 로직 (외부 Dim 영역 클릭)
+            modals.forEach(modal => {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.classList.remove('active');
+                    }
+                });
+            });
+
+            // ESC 키 입력 시 모달 닫기
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    modals.forEach(modal => modal.classList.remove('active'));
+                }
+            });
+
+            // 히든 특성 토글 기능 (PT 진행 시 클릭 유도)
+            const hiddenBtn = document.getElementById('btn-hidden-trait');
+            const hiddenText = document.getElementById('text-hidden-trait');
+            if(hiddenBtn && hiddenText) {
+                hiddenBtn.addEventListener('click', () => {
+                    hiddenBtn.style.display = 'none';
+                    hiddenText.style.display = 'block';
+                    hiddenText.animate([
+                        { opacity: 0, transform: 'translateY(-5px)' },
+                        { opacity: 1, transform: 'translateY(0)' }
+                    ], { duration: 400, fill: 'forwards' });
+                });
+            }
+
+            // Technical 육각형 레이더 차트 그리기 (Canvas API)
+            const drawRadarChart = () => {
+                const canvas = document.getElementById('techRadarCanvas');
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                
+                const width = canvas.width;
+                const height = canvas.height;
+                const centerX = width / 2;
+                const centerY = height / 2 + 10; 
+                const maxRadius = 70; 
+                
+                const labels = ['Algorithm', 'Java', 'Spring', 'DB', 'Python/C++', 'React'];
+                const data = [95, 90, 80, 75, 65, 50]; 
+                const numPoints = labels.length;
+                const angleStep = (Math.PI * 2) / numPoints;
+
+                const drawHexagon = (radius, isFill) => {
+                    ctx.beginPath();
+                    for (let i = 0; i < numPoints; i++) {
+                        const angle = i * angleStep - Math.PI / 2;
+                        const x = centerX + Math.cos(angle) * radius;
+                        const y = centerY + Math.sin(angle) * radius;
+                        if (i === 0) ctx.moveTo(x, y);
+                        else ctx.lineTo(x, y);
+                    }
+                    ctx.closePath();
+                    if (isFill) {
+                        ctx.fillStyle = '#1a1a1a';
+                        ctx.fill();
+                    }
+                    ctx.strokeStyle = '#444';
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                };
+
+                // 배경 육각형 가이드라인 그리기
+                drawHexagon(maxRadius, true);
+                drawHexagon(maxRadius * 0.66, false);
+                drawHexagon(maxRadius * 0.33, false);
+
+                // 중앙에서 뻗어나가는 방사형 선 그리기
+                ctx.beginPath();
+                for (let i = 0; i < numPoints; i++) {
+                    const angle = i * angleStep - Math.PI / 2;
+                    ctx.moveTo(centerX, centerY);
+                    ctx.lineTo(centerX + Math.cos(angle) * maxRadius, centerY + Math.sin(angle) * maxRadius);
+                }
+                ctx.strokeStyle = '#444';
+                ctx.stroke();
+
+                // 실제 데이터 영역 그리기
+                ctx.beginPath();
+                for (let i = 0; i < numPoints; i++) {
+                    const angle = i * angleStep - Math.PI / 2;
+                    const value = data[i] / 100;
+                    const x = centerX + Math.cos(angle) * maxRadius * value;
+                    const y = centerY + Math.sin(angle) * maxRadius * value;
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.closePath();
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.2)'; 
+                ctx.fill();
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // 꼭짓점 점 그리기
+                for (let i = 0; i < numPoints; i++) {
+                    const angle = i * angleStep - Math.PI / 2;
+                    const value = data[i] / 100;
+                    const x = centerX + Math.cos(angle) * maxRadius * value;
+                    const y = centerY + Math.sin(angle) * maxRadius * value;
+                    
+                    ctx.beginPath();
+                    ctx.arc(x, y, 4, 0, Math.PI * 2);
+                    ctx.fillStyle = '#fff';
+                    ctx.fill();
+                }
+
+                // 라벨 텍스트 그리기
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+
+                for (let i = 0; i < numPoints; i++) {
+                    const angle = i * angleStep - Math.PI / 2;
+                    const labelRadius = maxRadius + 22; 
+                    const x = centerX + Math.cos(angle) * labelRadius;
+                    const y = centerY + Math.sin(angle) * labelRadius;
+                    
+                    if (i === 0) { // Algorithm 강조
+                        ctx.fillStyle = '#ffffff';
+                        ctx.font = 'bold 12px Inter, Noto Sans KR, sans-serif'; 
+                    } else {
+                        ctx.fillStyle = '#a3a3a3';
+                        ctx.font = '11px Inter, Noto Sans KR, sans-serif';
+                    }
+                    ctx.fillText(labels[i], x, y);
+                }
+            };
+
+            // 약간의 딜레이를 주어 애니메이션이나 렌더링 안정성 확보
+            setTimeout(drawRadarChart, 50);
+        });
+    </script>
+</body>
+</html>
