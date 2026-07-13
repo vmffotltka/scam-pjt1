@@ -61,21 +61,21 @@
     <main class="mt-24 mb-12 max-w-5xl w-full mx-auto grid grid-cols-1 gap-6 px-4 z-10 relative">
         <section class="bg-card border border-borderLight rounded-lg p-8 shadow-lg transition-colors duration-300">
             <div class="flex flex-col md:flex-row items-center gap-8 mb-8">
-                <div class="w-32 h-32 rounded-lg border-2 border-borderLight overflow-hidden bg-black shrink-0 shadow-lg relative group interactive">
-                    <img id="profile-img" src="https://placehold.co/150x150/1a1a1a/ffffff?text=Photo" alt="Profile" class="w-full h-full object-cover grayscale transition duration-400 group-hover:grayscale-0 group-hover:scale-105" title="광클해보세요!">
-                </div>
-                <div class="flex-1 text-center md:text-left">
-                    <h1 class="text-4xl font-bold mb-1 text-textMain">유현서</h1>
-                    <div class="text-textDim text-sm mb-4">Yoo Hyun-seo</div>
-                    <div class="flex gap-2 flex-wrap justify-center md:justify-start">
-                        <span class="text-textMain border border-textDim px-3 py-1 rounded text-xs font-semibold uppercase">SSAFY 16th</span>
-                        <span class="text-textMain border border-textDim px-3 py-1 rounded text-xs font-semibold uppercase">Seoul 10th Class</span>
+                    <div class="w-32 h-32 rounded-lg border-2 border-borderLight overflow-hidden bg-black shrink-0 shadow-lg relative group interactive">
+                        <img id="profile-img" src="https://placehold.co/150x150/1a1a1a/ffffff?text=Photo" alt="Profile" class="w-full h-full object-cover grayscale transition duration-400 group-hover:grayscale-0 group-hover:scale-105" title="광클해보세요!">
+                    </div>
+                    <div class="flex-1 text-center md:text-left">
+                        <h1 class="text-4xl font-bold mb-1 text-textMain">유현서</h1>
+                        <div class="text-textDim text-sm mb-4">Yoo Hyun-seo</div>
+                        <div class="flex gap-2 flex-wrap justify-center md:justify-start">
+                            <span class="text-textMain border border-textDim px-3 py-1 rounded text-xs font-semibold uppercase">SSAFY 16th</span>
+                            <span class="text-textMain border border-textDim px-3 py-1 rounded text-xs font-semibold uppercase">Seoul 10th Class</span>
+                        </div>
+                    </div>
+                    <div class="flex-1 bg-body p-4 rounded border border-borderLight text-sm text-textDim leading-relaxed text-center md:text-left">
+                        "항상 '왜?'라는 것을 중요하게 여기고 새로운 경험을 좋아하는 개발자입니다."
                     </div>
                 </div>
-                <div class="flex-1 bg-body p-4 rounded border border-borderLight text-sm text-textDim leading-relaxed text-center md:text-left">
-                    "새로운 기술이나 아키텍처를 보면 일단 찍어먹어 보는 도전 정신과, 문제를 해결할 때 동료들과 '왜?'를 묻는 논리적 토의를 즐깁니다."
-                </div>
-            </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-borderLight pt-6">
                 <div class="flex border-b border-borderLight pb-4">
@@ -99,19 +99,19 @@
                                 <defs>
                                     <linearGradient id="fillCpp" x1="0" y1="0" x2="0" y2="1">
                                         <stop offset="25%" stop-color="#374151" />
-                                        <stop offset="25%" stop-color="var(--weak)" />
+                                        <stop offset="25%" stop-color="#ca8a04" />
                                     </linearGradient>
                                 </defs>
                                 <path d="M15,5 C10,5 5,15 5,30 C5,40 10,48 18,48 C25,48 25,35 25,25 C25,12 22,5 15,5 Z" fill="url(#fillCpp)"/>
                             </svg>
-                            <span class="text-sm font-bold text-weak">15 <span class="text-[0.6rem] text-textDim font-normal">(서브/왼발)</span></span>
+                            <span class="text-sm font-bold text-yellow-600">15 <span class="text-[0.6rem] text-textDim font-normal">(서브/왼발)</span></span>
                         </div>
                         <div class="flex flex-col items-center gap-1 group interactive">
-                            <span class="text-xs text-textMain font-bold">Java</span>
+                            <span class="text-xs text-white font-bold">Java</span>
                             <svg viewBox="0 0 30 50" width="24" height="40">
-                                <path d="M15,5 C20,5 25,15 25,30 C25,40 20,48 12,48 C5,48 5,35 5,25 C5,12 8,5 15,5 Z" fill="var(--strong)"/>
+                                <path d="M15,5 C20,5 25,15 25,30 C25,40 20,48 12,48 C5,48 5,35 5,25 C5,12 8,5 15,5 Z" fill="#dc2626"/>
                             </svg>
-                            <span class="text-sm font-bold text-strong">20 <span class="text-[0.6rem] text-textDim font-normal">(메인/오른발)</span></span>
+                            <span class="text-sm font-bold text-red-600">20 <span class="text-[0.6rem] text-textDim font-normal">(메인/오른발)</span></span>
                         </div>
                     </div>
                 </div>
@@ -257,8 +257,14 @@
                 ballState.vx *= bounce;
             }
 
-            // 회전 효과
+            // 회전 및 동적 그림자 효과 (공중에 있을수록 그림자가 흐려지고 멀어짐)
             ballState.rotation += ballState.vx * 2;
+            const heightFromGround = Math.max(0, ground - ballState.y);
+            const shadowY = Math.min(40, heightFromGround * 0.4 + 2); 
+            const blur = Math.min(25, heightFromGround * 0.2 + 2);
+            const shadowOpacity = Math.max(0.1, 0.4 - (heightFromGround * 0.001));
+            
+            ball.style.filter = `drop-shadow(0px ${shadowY}px ${blur}px rgba(0,0,0,${shadowOpacity}))`;
             ball.style.transform = `translate(${ballState.x}px, ${ballState.y}px) rotate(${ballState.rotation}deg)`;
             
             requestAnimationFrame(updateBall);

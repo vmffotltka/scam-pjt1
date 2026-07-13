@@ -85,7 +85,7 @@
                         <span class="px-2 py-1 border border-excellent text-excellent bg-excellent/10 rounded font-bold text-xs">Pure Backend</span>
                     </div>
                     <p class="text-sm text-textDim leading-relaxed">
-                        프로젝트를 거듭하며 '전문 백엔드 개발자'로 포지션 완벽 적응 중입니다. 프론트엔드 통신 및 렌더링 방식에 대한 이해도를 바탕으로 프론트 개발자와의 협업에 능통합니다.
+                        초기에는 프론트엔드와 백엔드를 모두 다루었으나, 여러 프로젝트를 거듭하며 자연스럽게 백엔드 개발에 더 큰 흥미와 적성을 느꼈습니다. 현재는 백엔드 비중을 대폭 늘려 전문적인 백엔드 개발자로 나아가고 있습니다.
                     </p>
                 </div>
             </div>
@@ -102,6 +102,9 @@
             </p>
         </section>
     </main>
+
+    <!-- Interactive Soccer Ball -->
+    <div id="soccer-ball" class="fixed top-0 left-0 text-5xl z-[9999] select-none" style="cursor: url('data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'32\' height=\'32\'><text y=\'24\' font-size=\'24\'>🥾</text></svg>') 16 16, pointer;" title="차보세요!">⚽</div>
 
     <script>
         // Global scripts (Scroll, Theme, Particles)
@@ -142,56 +145,116 @@
             }); requestAnimationFrame(animateP);
         } animateP();
 
-        // Radar Chart
+        // Radar Chart with Animation
+        let radarCurrentData = [0, 0, 0, 0, 0, 0]; // 애니메이션 시작값
+        const radarTargetData = [95, 90, 80, 75, 65, 50]; // 목표값
+
         function drawRadar() {
             const canvas = document.getElementById('techRadarCanvas');
             if (!canvas) return;
             const ctx = canvas.getContext('2d');
-            ctx.clearRect(0,0,canvas.width, canvas.height);
-            
             const isDark = document.documentElement.classList.contains('dark');
             const centerX = canvas.width / 2, centerY = canvas.height / 2 + 10, maxRadius = 75; 
             const labels = ['Algorithm', 'Java', 'Spring', 'DB', 'Python/C++', 'React'];
-            const data = [95, 90, 80, 75, 65, 50]; 
             const angleStep = (Math.PI * 2) / labels.length;
 
-            const drawPoly = (r, isFill) => {
+            function animateRadarLoop() {
+                ctx.clearRect(0,0,canvas.width, canvas.height);
+                
+                // 1. 배경 다각형 그리기
+                const drawPoly = (r, isFill) => {
+                    ctx.beginPath();
+                    for (let i = 0; i < labels.length; i++) {
+                        const x = centerX + Math.cos(i * angleStep - Math.PI / 2) * r, y = centerY + Math.sin(i * angleStep - Math.PI / 2) * r;
+                        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+                    }
+                    ctx.closePath();
+                    if (isFill) { ctx.fillStyle = isDark ? '#1a1a1a' : '#f3f4f6'; ctx.fill(); }
+                    ctx.strokeStyle = isDark ? '#444' : '#ccc'; ctx.lineWidth = 1; ctx.stroke();
+                };
+                drawPoly(maxRadius, true); drawPoly(maxRadius * 0.66, false); drawPoly(maxRadius * 0.33, false);
+
+                // 2. 중심선 그리기
                 ctx.beginPath();
                 for (let i = 0; i < labels.length; i++) {
-                    const x = centerX + Math.cos(i * angleStep - Math.PI / 2) * r, y = centerY + Math.sin(i * angleStep - Math.PI / 2) * r;
+                    ctx.moveTo(centerX, centerY);
+                    ctx.lineTo(centerX + Math.cos(i * angleStep - Math.PI / 2) * maxRadius, centerY + Math.sin(i * angleStep - Math.PI / 2) * maxRadius);
+                }
+                ctx.strokeStyle = isDark ? '#444' : '#ccc'; ctx.stroke();
+
+                // 3. 데이터 영역(초록색) 그리기 애니메이션 연산
+                let animating = false;
+                ctx.beginPath();
+                for (let i = 0; i < labels.length; i++) {
+                    // Easing 효과로 부드럽게 증가
+                    if (radarCurrentData[i] < radarTargetData[i]) {
+                        radarCurrentData[i] += (radarTargetData[i] - radarCurrentData[i]) * 0.1;
+                        if (radarTargetData[i] - radarCurrentData[i] < 0.5) radarCurrentData[i] = radarTargetData[i];
+                        animating = true;
+                    }
+                    
+                    const val = radarCurrentData[i] / 100;
+                    const x = centerX + Math.cos(i * angleStep - Math.PI / 2) * maxRadius * val;
+                    const y = centerY + Math.sin(i * angleStep - Math.PI / 2) * maxRadius * val;
                     i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
                 }
                 ctx.closePath();
-                if (isFill) { ctx.fillStyle = isDark ? '#1a1a1a' : '#f3f4f6'; ctx.fill(); }
-                ctx.strokeStyle = isDark ? '#444' : '#ccc'; ctx.lineWidth = 1; ctx.stroke();
-            };
-            drawPoly(maxRadius, true); drawPoly(maxRadius * 0.66, false); drawPoly(maxRadius * 0.33, false);
+                ctx.fillStyle = isDark ? 'rgba(74, 222, 128, 0.3)' : 'rgba(74, 222, 128, 0.5)'; ctx.fill();
+                ctx.strokeStyle = '#4ade80'; ctx.lineWidth = 2; ctx.stroke();
 
-            ctx.beginPath();
-            for (let i = 0; i < labels.length; i++) {
-                ctx.moveTo(centerX, centerY);
-                ctx.lineTo(centerX + Math.cos(i * angleStep - Math.PI / 2) * maxRadius, centerY + Math.sin(i * angleStep - Math.PI / 2) * maxRadius);
-            }
-            ctx.strokeStyle = isDark ? '#444' : '#ccc'; ctx.stroke();
+                // 4. 라벨 그리기
+                for (let i = 0; i < labels.length; i++) {
+                    const x = centerX + Math.cos(i * angleStep - Math.PI / 2) * (maxRadius + 22), y = centerY + Math.sin(i * angleStep - Math.PI / 2) * (maxRadius + 22);
+                    ctx.fillStyle = isDark ? (i===0 ? '#fff':'#a3a3a3') : (i===0 ? '#000':'#4b5563');
+                    ctx.font = i===0 ? 'bold 13px Inter' : '11px Inter';
+                    ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(labels[i], x, y);
+                }
 
-            ctx.beginPath();
-            for (let i = 0; i < labels.length; i++) {
-                const val = data[i] / 100;
-                const x = centerX + Math.cos(i * angleStep - Math.PI / 2) * maxRadius * val, y = centerY + Math.sin(i * angleStep - Math.PI / 2) * maxRadius * val;
-                i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+                if (animating) {
+                    requestAnimationFrame(animateRadarLoop);
+                }
             }
-            ctx.closePath();
-            ctx.fillStyle = isDark ? 'rgba(74, 222, 128, 0.3)' : 'rgba(74, 222, 128, 0.5)'; ctx.fill();
-            ctx.strokeStyle = '#4ade80'; ctx.lineWidth = 2; ctx.stroke();
-
-            for (let i = 0; i < labels.length; i++) {
-                const x = centerX + Math.cos(i * angleStep - Math.PI / 2) * (maxRadius + 22), y = centerY + Math.sin(i * angleStep - Math.PI / 2) * (maxRadius + 22);
-                ctx.fillStyle = isDark ? (i===0 ? '#fff':'#a3a3a3') : (i===0 ? '#000':'#4b5563');
-                ctx.font = i===0 ? 'bold 13px Inter' : '11px Inter';
-                ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(labels[i], x, y);
-            }
+            animateRadarLoop();
         }
         window.onload = drawRadar;
+
+        // Soccer Ball Interactive Logic (Shared)
+        const ball = document.getElementById('soccer-ball');
+        let ballState = { x: window.innerWidth - 100, y: 50, vx: 0, vy: 0, radius: 25, rotation: 0 };
+        const gravity = 0.5, bounce = -0.75, friction = 0.99, groundFriction = 0.95;
+
+        function updateBall() {
+            ballState.vy += gravity; ballState.x += ballState.vx; ballState.y += ballState.vy;
+            ballState.vx *= friction; ballState.vy *= friction;
+            const ground = window.innerHeight - 60, rightWall = window.innerWidth - 60, leftWall = 10;
+
+            if (ballState.y > ground) { ballState.y = ground; ballState.vy *= bounce; if (Math.abs(ballState.vy) < 1.5) ballState.vy = 0; ballState.vx *= groundFriction; }
+            if (ballState.x > rightWall) { ballState.x = rightWall; ballState.vx *= bounce; } else if (ballState.x < leftWall) { ballState.x = leftWall; ballState.vx *= bounce; }
+
+            ballState.rotation += ballState.vx * 2;
+            const heightFromGround = Math.max(0, ground - ballState.y);
+            const shadowY = Math.min(40, heightFromGround * 0.4 + 2); 
+            const blur = Math.min(25, heightFromGround * 0.2 + 2);
+            const shadowOpacity = Math.max(0.1, 0.4 - (heightFromGround * 0.001));
+            
+            ball.style.filter = `drop-shadow(0px ${shadowY}px ${blur}px rgba(0,0,0,${shadowOpacity}))`;
+            ball.style.transform = `translate(${ballState.x}px, ${ballState.y}px) rotate(${ballState.rotation}deg)`;
+            requestAnimationFrame(updateBall);
+        }
+        updateBall();
+
+        document.addEventListener('mousemove', (e) => {
+            const dx = (ballState.x + 25) - e.clientX, dy = (ballState.y + 25) - e.clientY;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 60) {
+                const force = Math.min(20, 400 / (dist + 1));
+                ballState.vx += (dx / dist) * force; ballState.vy += (dy / dist) * force - 3;
+            }
+        });
+        window.addEventListener('resize', () => {
+            if(ballState.x > window.innerWidth) ballState.x = window.innerWidth - 60;
+            if(ballState.y > window.innerHeight) ballState.y = window.innerHeight - 60;
+        });
     </script>
 </body>
 </html>

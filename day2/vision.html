@@ -86,11 +86,19 @@
                     <span class="bg-body border border-borderLight px-3 py-1 rounded text-sm text-textDim">성실함의 증명</span>
                 </div>
                 <p class="text-sm text-textDim leading-relaxed">
-                    매일 30분씩 주 6일 맨몸운동(푸시업, 스쿼트)을 꾸준히 수행 중입니다. 현재 퀘스트는 데드행과 숄더패킹을 마스터하여 <strong>'정자세 풀업 1개'</strong>를 성공하는 것입니다. 끈기와 체력은 백엔드 개발자의 필수 소양이라 믿습니다.
+                    매일 30분씩 주 6일 맨몸운동(푸시업, 스쿼트)을 꾸준히 수행 중입니다. 현재 퀘스트는 <strong>'정자세 풀업 1개'</strong>를 성공하는 것입니다. 끈기와 체력은 백엔드 개발자의 필수 소양이라 믿습니다.
                 </p>
-                <div class="mt-4 p-3 bg-body rounded border border-borderLight text-sm flex items-center gap-3">
-                    체력: 85% 
-                    <div class="flex-1 h-2 bg-gray-700 rounded overflow-hidden"><div class="h-full bg-excellent w-[85%]"></div></div>
+                <div class="mt-4 p-3 bg-body rounded border border-borderLight text-sm flex flex-col justify-center">
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="text-xs font-semibold text-yellow-500 bg-yellow-500/10 px-2 py-0.5 rounded border border-yellow-500/30">Issue</span> 
+                        <span class="text-[11px] text-textDim">조기 기상으로 인한 일시적 체력 저하 상태</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="shrink-0 text-textDim">체력: 85%</span>
+                        <div class="flex-1 h-2 bg-gray-700 rounded overflow-hidden shadow-inner">
+                            <div class="h-full bg-lime-500 w-[85%] shadow-[0_0_10px_#84cc16]"></div>
+                        </div>
+                    </div>
                 </div>
             </section>
         </div>
@@ -105,8 +113,8 @@
                 </div>
                 <div id="scouting-content" class="scouting-content flex flex-col gap-4">
                     <div class="border-b border-borderLight pb-4">
-                        <strong class="text-textMain text-lg block mb-1">성장 갈증 (Adaptability & Ambition)</strong>
-                        <span class="text-sm text-textDim">"왜?"라는 질문을 즐기는 토론형 개발자. 문제 해결 후 코드를 반드시 복기하며 소통을 통해 성장함.</span>
+                        <strong class="text-textMain text-lg block mb-1">딥다이브 (Deep Dive)</strong>
+                        <span class="text-sm text-textDim">단순히 동작하는 코드에 만족하지 않고, 내부 동작 원리와 CS 지식을 연관 지어 깊게 파고드는 것을 즐깁니다.</span>
                     </div>
                     <div>
                         <strong class="text-textMain text-lg block mb-1">음악 감상 & 피아노 (소소한 취미)</strong>
@@ -129,6 +137,9 @@
             </ul>
         </section>
     </main>
+
+    <!-- Interactive Soccer Ball -->
+    <div id="soccer-ball" class="fixed top-0 left-0 text-5xl z-[9999] select-none" style="cursor: url('data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'32\' height=\'32\'><text y=\'24\' font-size=\'24\'>🥾</text></svg>') 16 16, pointer;" title="차보세요!">⚽</div>
 
     <script>
         // Global scripts
@@ -196,6 +207,44 @@
             loadMemos();
         });
         loadMemos();
+
+        // Soccer Ball Interactive Logic (Shared)
+        const ball = document.getElementById('soccer-ball');
+        let ballState = { x: window.innerWidth - 100, y: 50, vx: 0, vy: 0, radius: 25, rotation: 0 };
+        const gravity = 0.5, bounce = -0.75, friction = 0.99, groundFriction = 0.95;
+
+        function updateBall() {
+            ballState.vy += gravity; ballState.x += ballState.vx; ballState.y += ballState.vy;
+            ballState.vx *= friction; ballState.vy *= friction;
+            const ground = window.innerHeight - 60, rightWall = window.innerWidth - 60, leftWall = 10;
+
+            if (ballState.y > ground) { ballState.y = ground; ballState.vy *= bounce; if (Math.abs(ballState.vy) < 1.5) ballState.vy = 0; ballState.vx *= groundFriction; }
+            if (ballState.x > rightWall) { ballState.x = rightWall; ballState.vx *= bounce; } else if (ballState.x < leftWall) { ballState.x = leftWall; ballState.vx *= bounce; }
+
+            ballState.rotation += ballState.vx * 2;
+            const heightFromGround = Math.max(0, ground - ballState.y);
+            const shadowY = Math.min(40, heightFromGround * 0.4 + 2); 
+            const blur = Math.min(25, heightFromGround * 0.2 + 2);
+            const shadowOpacity = Math.max(0.1, 0.4 - (heightFromGround * 0.001));
+            
+            ball.style.filter = `drop-shadow(0px ${shadowY}px ${blur}px rgba(0,0,0,${shadowOpacity}))`;
+            ball.style.transform = `translate(${ballState.x}px, ${ballState.y}px) rotate(${ballState.rotation}deg)`;
+            requestAnimationFrame(updateBall);
+        }
+        updateBall();
+
+        document.addEventListener('mousemove', (e) => {
+            const dx = (ballState.x + 25) - e.clientX, dy = (ballState.y + 25) - e.clientY;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 60) {
+                const force = Math.min(20, 400 / (dist + 1));
+                ballState.vx += (dx / dist) * force; ballState.vy += (dy / dist) * force - 3;
+            }
+        });
+        window.addEventListener('resize', () => {
+            if(ballState.x > window.innerWidth) ballState.x = window.innerWidth - 60;
+            if(ballState.y > window.innerHeight) ballState.y = window.innerHeight - 60;
+        });
     </script>
 </body>
 </html>
