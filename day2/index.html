@@ -61,21 +61,22 @@
     <main class="mt-24 mb-12 max-w-5xl w-full mx-auto grid grid-cols-1 gap-6 px-4 z-10 relative">
         <section class="bg-card border border-borderLight rounded-lg p-8 shadow-lg transition-colors duration-300">
             <div class="flex flex-col md:flex-row items-center gap-8 mb-8">
-                    <div class="w-32 h-32 rounded-lg border-2 border-borderLight overflow-hidden bg-black shrink-0 shadow-lg relative group interactive">
-                        <img id="profile-img" src="https://placehold.co/150x150/1a1a1a/ffffff?text=Photo" alt="Profile" class="w-full h-full object-cover grayscale transition duration-400 group-hover:grayscale-0 group-hover:scale-105" title="광클해보세요!">
-                    </div>
-                    <div class="flex-1 text-center md:text-left">
-                        <h1 class="text-4xl font-bold mb-1 text-textMain">유현서</h1>
-                        <div class="text-textDim text-sm mb-4">Yoo Hyun-seo</div>
-                        <div class="flex gap-2 flex-wrap justify-center md:justify-start">
-                            <span class="text-textMain border border-textDim px-3 py-1 rounded text-xs font-semibold uppercase">SSAFY 16th</span>
-                            <span class="text-textMain border border-textDim px-3 py-1 rounded text-xs font-semibold uppercase">Seoul 10th Class</span>
-                        </div>
-                    </div>
-                    <div class="flex-1 bg-body p-4 rounded border border-borderLight text-sm text-textDim leading-relaxed text-center md:text-left">
-                        "항상 '왜?'라는 것을 중요하게 여기고 새로운 경험을 좋아하는 개발자입니다."
+                <div class="w-32 h-32 rounded-lg border-2 border-borderLight overflow-hidden bg-black shrink-0 shadow-lg relative group interactive">
+                    <!-- 프로필 이미지는 그대로 유지 (title 속성만 깔끔하게 제거) -->
+                    <img id="profile-img" src="https://placehold.co/150x150/1a1a1a/ffffff?text=Photo" alt="Profile" class="w-full h-full object-cover grayscale transition duration-400 group-hover:grayscale-0 group-hover:scale-105">
+                </div>
+                <div class="flex-1 text-center md:text-left">
+                    <h1 class="text-4xl font-bold mb-1 text-textMain">유현서</h1>
+                    <div class="text-textDim text-sm mb-4">Yoo Hyun-seo</div>
+                    <div class="flex gap-2 flex-wrap justify-center md:justify-start">
+                        <span class="text-textMain border border-textDim px-3 py-1 rounded text-xs font-semibold uppercase">SSAFY 16th</span>
+                        <span class="text-textMain border border-textDim px-3 py-1 rounded text-xs font-semibold uppercase">Seoul 10th Class</span>
                     </div>
                 </div>
+                <div class="flex-1 bg-body p-4 rounded border border-borderLight text-sm text-textDim leading-relaxed text-center md:text-left">
+                    "항상 '왜?'라는 것을 중요하게 여기고 새로운 경험을 좋아합니다."
+                </div>
+            </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-borderLight pt-6">
                 <div class="flex border-b border-borderLight pb-4">
@@ -107,7 +108,7 @@
                             <span class="text-sm font-bold text-yellow-600">15 <span class="text-[0.6rem] text-textDim font-normal">(서브/왼발)</span></span>
                         </div>
                         <div class="flex flex-col items-center gap-1 group interactive">
-                            <span class="text-xs text-white font-bold">Java</span>
+                            <span class="text-xs text-textMain font-bold transition">Java</span>
                             <svg viewBox="0 0 30 50" width="24" height="40">
                                 <path d="M15,5 C20,5 25,15 25,30 C25,40 20,48 12,48 C5,48 5,35 5,25 C5,12 8,5 15,5 Z" fill="#dc2626"/>
                             </svg>
@@ -189,7 +190,9 @@
         </section>
     </main>
 
-    <!-- Interactive Soccer Ball (물리 엔진 적용을 위해 class 수정) -->
+    <!-- 독립적인 바닥 그림자 -->
+    <div id="ball-shadow" class="fixed top-0 left-0 pointer-events-none z-[50] rounded-[50%] bg-black/40 blur-sm transition-opacity duration-75"></div>
+    <!-- 물리 엔진 적용된 축구공 -->
     <div id="soccer-ball" class="fixed top-0 left-0 text-5xl z-[60] select-none" style="cursor: url('data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'32\' height=\'32\'><text y=\'24\' font-size=\'24\'>🥾</text></svg>') 16 16, pointer;" title="차보세요!">⚽</div>
 
     <script>
@@ -216,96 +219,16 @@
             updateThemeIcon(false);
         }
 
-        // Soccer Ball Interactive Logic (Physics Engine)
-        const ball = document.getElementById('soccer-ball');
-        let ballState = {
-            x: window.innerWidth - 100, // 화면 우측
-            y: 50, // 공중에서 시작 (떨어짐)
-            vx: 0, vy: 0, radius: 25, rotation: 0
-        };
-        const gravity = 0.5;
-        const bounce = -0.75;
-        const friction = 0.99; // 공기 저항
-        const groundFriction = 0.95; // 바닥 마찰
-
-        function updateBall() {
-            ballState.vy += gravity;
-            ballState.x += ballState.vx;
-            ballState.y += ballState.vy;
-            
-            ballState.vx *= friction;
-            ballState.vy *= friction;
-
-            const ground = window.innerHeight - 60; // 바닥 (여백 고려)
-            const rightWall = window.innerWidth - 60;
-            const leftWall = 10;
-
-            // 바닥 충돌
-            if (ballState.y > ground) {
-                ballState.y = ground;
-                ballState.vy *= bounce;
-                if (Math.abs(ballState.vy) < 1.5) ballState.vy = 0; // 잔떨림 방지
-                ballState.vx *= groundFriction;
-            }
-
-            // 벽 충돌
-            if (ballState.x > rightWall) {
-                ballState.x = rightWall;
-                ballState.vx *= bounce;
-            } else if (ballState.x < leftWall) {
-                ballState.x = leftWall;
-                ballState.vx *= bounce;
-            }
-
-            // 회전 및 동적 그림자 효과 (공중에 있을수록 그림자가 흐려지고 멀어짐)
-            ballState.rotation += ballState.vx * 2;
-            const heightFromGround = Math.max(0, ground - ballState.y);
-            const shadowY = Math.min(40, heightFromGround * 0.4 + 2); 
-            const blur = Math.min(25, heightFromGround * 0.2 + 2);
-            const shadowOpacity = Math.max(0.1, 0.4 - (heightFromGround * 0.001));
-            
-            ball.style.filter = `drop-shadow(0px ${shadowY}px ${blur}px rgba(0,0,0,${shadowOpacity}))`;
-            ball.style.transform = `translate(${ballState.x}px, ${ballState.y}px) rotate(${ballState.rotation}deg)`;
-            
-            requestAnimationFrame(updateBall);
-        }
-        updateBall(); // 애니메이션 시작
-
-        // 마우스를 가져다 대면(가까워지면) 차는 효과
-        document.addEventListener('mousemove', (e) => {
-            const ballCenterX = ballState.x + 25; 
-            const ballCenterY = ballState.y + 25;
-            
-            const dx = ballCenterX - e.clientX;
-            const dy = ballCenterY - e.clientY;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-            
-            // 마우스가 공 근처(반경 60px 이내)로 오면 밀어냄
-            if (dist < 60) {
-                const force = Math.min(20, 400 / (dist + 1)); // 거리에 반비례하는 힘
-                ballState.vx += (dx / dist) * force;
-                ballState.vy += (dy / dist) * force - 3; // 위쪽으로 차올리는 효과 추가
-            }
-        });
-
-        // 브라우저 크기 변경 시 공 위치 보정
-        window.addEventListener('resize', () => {
-            if(ballState.x > window.innerWidth) ballState.x = window.innerWidth - 60;
-            if(ballState.y > window.innerHeight) ballState.y = window.innerHeight - 60;
-        });
-
         // Timeline Interactive Logic
         function toggleTimeline(element) {
             const desc = element.querySelector('.timeline-desc');
             const allDescs = document.querySelectorAll('.timeline-desc');
             
-            // 다른 열려있는 항목 닫기 (선택사항, 아코디언 방식)
             allDescs.forEach(d => {
                 if(d !== desc && !d.classList.contains('hidden')) {
                     d.classList.add('hidden');
                 }
             });
-
             desc.classList.toggle('hidden');
         }
 
@@ -315,7 +238,6 @@
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
         
         let particles = [];
-        // 파티클 개수 증가 (50 -> 80)
         for(let i=0; i<80; i++) {
             particles.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx: (Math.random()-0.5)*0.5, vy: (Math.random()-0.5)*0.5 });
         }
@@ -323,7 +245,6 @@
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             const isDark = document.documentElement.classList.contains('dark');
-            // 파티클을 훨씬 진하고 선명하게 변경
             ctx.fillStyle = isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)';
             ctx.strokeStyle = isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.4)';
             
@@ -333,12 +254,11 @@
                 if(p.x < 0 || p.x > canvas.width) p.vx *= -1;
                 if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
                 
-                ctx.beginPath(); ctx.arc(p.x, p.y, 3.5, 0, Math.PI*2); ctx.fill(); // 굵기 증가
+                ctx.beginPath(); ctx.arc(p.x, p.y, 3.5, 0, Math.PI*2); ctx.fill();
                 
                 for(let j=i+1; j<particles.length; j++) {
                     let p2 = particles[j];
                     let dist = Math.sqrt(Math.pow(p.x-p2.x, 2) + Math.pow(p.y-p2.y, 2));
-                    // 연결 거리 및 선 굵기 증가
                     if(dist < 150) { 
                         ctx.beginPath(); 
                         ctx.lineWidth = 1.2;
@@ -352,6 +272,102 @@
         }
         animate();
         window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+
+        // Soccer Ball Interactive Logic (Physics Engine with SessionStorage)
+        const ball = document.getElementById('soccer-ball');
+        const ballShadow = document.getElementById('ball-shadow');
+        
+        // 이전 페이지(상태)에서 넘어온 공의 위치와 속도 로드
+        let savedState = null;
+        try {
+            savedState = JSON.parse(sessionStorage.getItem('ballState'));
+        } catch(e) {}
+
+        // 저장된 상태가 있으면 사용, 없으면 우측 상단 초기 설정
+        let ballState = (savedState && typeof savedState.x === 'number') ? savedState : {
+            x: window.innerWidth - 100, 
+            y: 50, 
+            vx: 0, vy: 0, radius: 25, rotation: 0
+        };
+
+        const gravity = 0.5;
+        const bounce = -0.75;
+        const friction = 0.99; 
+        const groundFriction = 0.95; 
+
+        // 페이지를 떠날 때 현재 공 상태 저장
+        window.addEventListener('beforeunload', () => {
+            sessionStorage.setItem('ballState', JSON.stringify(ballState));
+        });
+
+        function updateBall() {
+            ballState.vy += gravity;
+            ballState.x += ballState.vx;
+            ballState.y += ballState.vy;
+            
+            ballState.vx *= friction;
+            ballState.vy *= friction;
+
+            const ground = window.innerHeight - 60;
+            const rightWall = window.innerWidth - 60;
+            const leftWall = 10;
+
+            if (ballState.y > ground) {
+                ballState.y = ground;
+                ballState.vy *= bounce;
+                if (Math.abs(ballState.vy) < 1.5) ballState.vy = 0; 
+                ballState.vx *= groundFriction;
+            }
+
+            if (ballState.x > rightWall) {
+                ballState.x = rightWall;
+                ballState.vx *= bounce;
+            } else if (ballState.x < leftWall) {
+                ballState.x = leftWall;
+                ballState.vx *= bounce;
+            }
+
+            ballState.rotation += ballState.vx * 2;
+            
+            // 바닥 그림자 계산 로직 (공의 높이에 따라 그림자 크기, 투명도 조절)
+            const heightFromGround = Math.max(0, ground - ballState.y);
+            const shadowScale = Math.max(0.3, 1 - (heightFromGround / window.innerHeight) * 1.5);
+            const shadowOpacity = Math.max(0, 0.6 - (heightFromGround * 0.001));
+            const shadowWidth = 50 * shadowScale;
+            const shadowHeight = 15 * shadowScale;
+
+            // 그림자 요소에 스타일 적용
+            ballShadow.style.width = `${shadowWidth}px`;
+            ballShadow.style.height = `${shadowHeight}px`;
+            ballShadow.style.transform = `translate(${ballState.x + 25 - shadowWidth/2}px, ${ground + 45}px)`;
+            ballShadow.style.opacity = shadowOpacity;
+
+            // 축구공 이동
+            ball.style.transform = `translate(${ballState.x}px, ${ballState.y}px) rotate(${ballState.rotation}deg)`;
+            
+            requestAnimationFrame(updateBall);
+        }
+        updateBall();
+
+        document.addEventListener('mousemove', (e) => {
+            const ballCenterX = ballState.x + 25; 
+            const ballCenterY = ballState.y + 25;
+            
+            const dx = ballCenterX - e.clientX;
+            const dy = ballCenterY - e.clientY;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            
+            if (dist < 60) {
+                const force = Math.min(20, 400 / (dist + 1)); 
+                ballState.vx += (dx / dist) * force;
+                ballState.vy += (dy / dist) * force - 3; 
+            }
+        });
+
+        window.addEventListener('resize', () => {
+            if(ballState.x > window.innerWidth) ballState.x = window.innerWidth - 60;
+            if(ballState.y > window.innerHeight) ballState.y = window.innerHeight - 60;
+        });
     </script>
 </body>
 </html>

@@ -139,6 +139,7 @@
     </main>
 
     <!-- Interactive Soccer Ball -->
+    <div id="ball-shadow" class="fixed top-0 left-0 pointer-events-none z-[9998] rounded-[50%] bg-black/40 blur-sm transition-opacity duration-75"></div>
     <div id="soccer-ball" class="fixed top-0 left-0 text-5xl z-[9999] select-none" style="cursor: url('data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'32\' height=\'32\'><text y=\'24\' font-size=\'24\'>🥾</text></svg>') 16 16, pointer;" title="차보세요!">⚽</div>
 
     <script>
@@ -210,8 +211,17 @@
 
         // Soccer Ball Interactive Logic (Shared)
         const ball = document.getElementById('soccer-ball');
-        let ballState = { x: window.innerWidth - 100, y: 50, vx: 0, vy: 0, radius: 25, rotation: 0 };
+        const ballShadow = document.getElementById('ball-shadow');
+        
+        let savedState = null;
+        try { savedState = JSON.parse(sessionStorage.getItem('ballState')); } catch(e) {}
+        let ballState = (savedState && typeof savedState.x === 'number') ? savedState : { x: window.innerWidth - 100, y: 50, vx: 0, vy: 0, radius: 25, rotation: 0 };
+        
         const gravity = 0.5, bounce = -0.75, friction = 0.99, groundFriction = 0.95;
+
+        window.addEventListener('beforeunload', () => {
+            sessionStorage.setItem('ballState', JSON.stringify(ballState));
+        });
 
         function updateBall() {
             ballState.vy += gravity; ballState.x += ballState.vx; ballState.y += ballState.vy;
@@ -223,11 +233,17 @@
 
             ballState.rotation += ballState.vx * 2;
             const heightFromGround = Math.max(0, ground - ballState.y);
-            const shadowY = Math.min(40, heightFromGround * 0.4 + 2); 
-            const blur = Math.min(25, heightFromGround * 0.2 + 2);
-            const shadowOpacity = Math.max(0.1, 0.4 - (heightFromGround * 0.001));
             
-            ball.style.filter = `drop-shadow(0px ${shadowY}px ${blur}px rgba(0,0,0,${shadowOpacity}))`;
+            const shadowScale = Math.max(0.3, 1 - (heightFromGround / window.innerHeight) * 1.5);
+            const shadowOpacity = Math.max(0, 0.6 - (heightFromGround * 0.001));
+            const shadowWidth = 50 * shadowScale;
+            const shadowHeight = 15 * shadowScale;
+            
+            ballShadow.style.width = `${shadowWidth}px`;
+            ballShadow.style.height = `${shadowHeight}px`;
+            ballShadow.style.transform = `translate(${ballState.x + 25 - shadowWidth/2}px, ${ground + 45}px)`;
+            ballShadow.style.opacity = shadowOpacity;
+
             ball.style.transform = `translate(${ballState.x}px, ${ballState.y}px) rotate(${ballState.rotation}deg)`;
             requestAnimationFrame(updateBall);
         }
