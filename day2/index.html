@@ -104,28 +104,72 @@
         </section>
 
         <section class="bg-card border border-borderLight rounded-lg p-8 shadow-lg transition-colors duration-300 mt-4">
-            <h2 class="text-lg font-bold text-textDim uppercase tracking-wide border-l-4 border-textMain pl-3 mb-6">Career Timeline</h2>
-            <div class="relative border-l-2 border-borderHighlight ml-3 space-y-8 py-2">
-                <div class="relative pl-6">
-                    <div class="absolute w-4 h-4 bg-excellent rounded-full -left-[9px] top-1 shadow-[0_0_10px_#4ade80]"></div>
-                    <h3 class="font-bold text-textMain text-md">SSAFY 16기 합류</h3>
-                    <p class="text-sm text-textDim mt-1">알고리즘 및 백엔드 심화 학습 시작. 팀 프로젝트를 통한 실무 협업 능력 배양 중.</p>
+            <div class="flex justify-between items-end mb-6">
+                <h2 class="text-lg font-bold text-textDim uppercase tracking-wide border-l-4 border-textMain pl-3">Career Timeline</h2>
+                <span class="text-xs text-excellent animate-pulse">👉 항목을 클릭하여 상세 정보 열람</span>
+            </div>
+            <div class="relative border-l-2 border-borderHighlight ml-3 space-y-4 py-2" id="timeline-container">
+                
+                <!-- 2026.07 -->
+                <div class="relative pl-6 interactive group cursor-pointer" onclick="toggleTimeline(this)">
+                    <div class="absolute w-4 h-4 bg-excellent rounded-full -left-[9px] top-1 shadow-[0_0_10px_#4ade80] transition-transform duration-300 group-hover:scale-150"></div>
+                    <div class="text-xs font-bold text-excellent mb-1 tracking-wider">2026.07</div>
+                    <h3 class="font-bold text-textMain text-md transition-colors duration-300 group-hover:text-excellent">SSAFY 16기 합류</h3>
+                    <div class="timeline-desc hidden mt-2 p-3 bg-body rounded border border-borderLight text-sm text-textDim leading-relaxed">
+                        알고리즘 및 백엔드 심화 학습 시작. 팀 프로젝트를 통한 실무 협업 능력 배양 중.
+                    </div>
                 </div>
-                <div class="relative pl-6">
-                    <div class="absolute w-4 h-4 bg-card border-2 border-borderHighlight rounded-full -left-[9px] top-1"></div>
-                    <h3 class="font-bold text-textMain text-md">2024 HSUPC 1등 (알고리즘 소모임)</h3>
-                    <p class="text-sm text-textDim mt-1">학내 알고리즘 소모임을 창설하여 스터디를 주도하고 프로그래밍 경진대회에서 1등을 수상.</p>
+
+                <!-- 2026.02 -->
+                <div class="relative pl-6 interactive group cursor-pointer" onclick="toggleTimeline(this)">
+                    <div class="absolute w-4 h-4 bg-card border-2 border-borderHighlight rounded-full -left-[9px] top-1 transition-transform duration-300 group-hover:scale-150 group-hover:border-textMain"></div>
+                    <div class="text-xs font-bold text-textDim mb-1 tracking-wider">2026.02</div>
+                    <h3 class="font-bold text-textMain text-md transition-colors duration-300 group-hover:text-textDim">한성대학교 컴퓨터공학부 졸업</h3>
+                    <div class="timeline-desc hidden mt-2 p-3 bg-body rounded border border-borderLight text-sm text-textDim leading-relaxed">
+                        컴퓨터 과학의 기초를 다지며, 개발자로서의 비전을 확립 (GPA 3.52 / 4.5).
+                    </div>
                 </div>
-                <div class="relative pl-6">
-                    <div class="absolute w-4 h-4 bg-card border-2 border-borderHighlight rounded-full -left-[9px] top-1"></div>
-                    <h3 class="font-bold text-textMain text-md">LLM 기반 교육 보조 프로그램 (우수상)</h3>
-                    <p class="text-sm text-textDim mt-1">사용자 자료 기반 객관식/주관식 모의고사 생성 서비스 개발 (27팀 중 5등).</p>
+
+                <!-- 2024.11 코딩대회 -->
+                <div class="relative pl-6 interactive group cursor-pointer" onclick="toggleTimeline(this)">
+                    <div class="absolute w-4 h-4 bg-card border-2 border-borderHighlight rounded-full -left-[9px] top-1 transition-transform duration-300 group-hover:scale-150 group-hover:border-textMain"></div>
+                    <div class="text-xs font-bold text-textDim mb-1 tracking-wider">2024.11</div>
+                    <h3 class="font-bold text-textMain text-md transition-colors duration-300 group-hover:text-textDim">한성SW 페스티벌 코딩대회 우수상</h3>
+                    <div class="timeline-desc hidden mt-2 p-3 bg-body rounded border border-borderLight text-sm text-textDim leading-relaxed">
+                        학내 코딩 경진대회에서 52명 중 7등을 기록하며 우수상 수상. 알고리즘 문제 해결 능력 입증.
+                    </div>
                 </div>
-                <div class="relative pl-6">
-                    <div class="absolute w-4 h-4 bg-card border-2 border-borderHighlight rounded-full -left-[9px] top-1"></div>
-                    <h3 class="font-bold text-textMain text-md">한성대학교 컴퓨터공학부 졸업</h3>
-                    <p class="text-sm text-textDim mt-1">컴퓨터 과학의 기초를 다지며, 개발자로서의 비전을 확립 (GPA 3.52 / 4.5).</p>
+
+                <!-- 2024.11 공모전 -->
+                <div class="relative pl-6 interactive group cursor-pointer" onclick="toggleTimeline(this)">
+                    <div class="absolute w-4 h-4 bg-card border-2 border-borderHighlight rounded-full -left-[9px] top-1 transition-transform duration-300 group-hover:scale-150 group-hover:border-textMain"></div>
+                    <div class="text-xs font-bold text-textDim mb-1 tracking-wider">2024.11</div>
+                    <h3 class="font-bold text-textMain text-md transition-colors duration-300 group-hover:text-textDim">한성SW 페스티벌 공모전 우수상</h3>
+                    <div class="timeline-desc hidden mt-2 p-3 bg-body rounded border border-borderLight text-sm text-textDim leading-relaxed">
+                        LLM을 기반으로 사용자 자료 바탕의 객관식/주관식 모의고사 생성 서비스 개발 (27팀 중 5등).
+                    </div>
                 </div>
+
+                <!-- 2024.11 HSUPC -->
+                <div class="relative pl-6 interactive group cursor-pointer" onclick="toggleTimeline(this)">
+                    <div class="absolute w-4 h-4 bg-card border-2 border-borderHighlight rounded-full -left-[9px] top-1 transition-transform duration-300 group-hover:scale-150 group-hover:border-textMain"></div>
+                    <div class="text-xs font-bold text-textDim mb-1 tracking-wider">2024.11</div>
+                    <h3 class="font-bold text-textMain text-md transition-colors duration-300 group-hover:text-textDim">2024 HSUPC 1등 (알고리즘 소모임)</h3>
+                    <div class="timeline-desc hidden mt-2 p-3 bg-body rounded border border-borderLight text-sm text-textDim leading-relaxed">
+                        학내 알고리즘 소모임을 창설하여 스터디를 주도하고 프로그래밍 경진대회에서 1등을 수상.
+                    </div>
+                </div>
+
+                <!-- 2019.02 -->
+                <div class="relative pl-6 interactive group cursor-pointer" onclick="toggleTimeline(this)">
+                    <div class="absolute w-4 h-4 bg-card border-2 border-borderHighlight rounded-full -left-[9px] top-1 transition-transform duration-300 group-hover:scale-150 group-hover:border-textMain"></div>
+                    <div class="text-xs font-bold text-textDim mb-1 tracking-wider">2019.02</div>
+                    <h3 class="font-bold text-textMain text-md transition-colors duration-300 group-hover:text-textDim">서울구암고등학교 졸업</h3>
+                    <div class="timeline-desc hidden mt-2 p-3 bg-body rounded border border-borderLight text-sm text-textDim leading-relaxed">
+                        이과 과정을 이수하며 논리적 사고의 기반을 다짐.
+                    </div>
+                </div>
+
             </div>
         </section>
     </main>
@@ -183,21 +227,38 @@
             }
         });
 
+        // Timeline Interactive Logic
+        function toggleTimeline(element) {
+            const desc = element.querySelector('.timeline-desc');
+            const allDescs = document.querySelectorAll('.timeline-desc');
+            
+            // 다른 열려있는 항목 닫기 (선택사항, 아코디언 방식)
+            allDescs.forEach(d => {
+                if(d !== desc && !d.classList.contains('hidden')) {
+                    d.classList.add('hidden');
+                }
+            });
+
+            desc.classList.toggle('hidden');
+        }
+
         // Particle Background Canvas
         const canvas = document.getElementById('particles');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
         
         let particles = [];
-        for(let i=0; i<50; i++) {
+        // 파티클 개수 증가 (50 -> 80)
+        for(let i=0; i<80; i++) {
             particles.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx: (Math.random()-0.5)*0.5, vy: (Math.random()-0.5)*0.5 });
         }
 
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             const isDark = document.documentElement.classList.contains('dark');
-            ctx.fillStyle = isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.3)';
-            ctx.strokeStyle = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)';
+            // 파티클 색상과 크기를 훨씬 진하게 변경
+            ctx.fillStyle = isDark ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.6)';
+            ctx.strokeStyle = isDark ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.2)';
             
             for(let i=0; i<particles.length; i++) {
                 let p = particles[i];
@@ -205,12 +266,13 @@
                 if(p.x < 0 || p.x > canvas.width) p.vx *= -1;
                 if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
                 
-                ctx.beginPath(); ctx.arc(p.x, p.y, 2, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(p.x, p.y, 2.5, 0, Math.PI*2); ctx.fill(); // 입자 크기도 약간 키움
                 
                 for(let j=i+1; j<particles.length; j++) {
                     let p2 = particles[j];
                     let dist = Math.sqrt(Math.pow(p.x-p2.x, 2) + Math.pow(p.y-p2.y, 2));
-                    if(dist < 100) { ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y); ctx.stroke(); }
+                    // 연결 거리 증가 (100 -> 120)
+                    if(dist < 120) { ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y); ctx.stroke(); }
                 }
             }
             requestAnimationFrame(animate);
