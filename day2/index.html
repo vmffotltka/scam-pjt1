@@ -36,6 +36,7 @@
         body { 
             cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><text y="24" font-size="24">🏃</text></svg>') 16 16, auto; 
             background-color: var(--bg-body); color: var(--text-main); transition: background-color 0.3s, color 0.3s; 
+            overflow-x: hidden;
         }
         .interactive:hover { 
             cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><text y="24" font-size="24">👆</text></svg>') 16 16, pointer; 
@@ -58,13 +59,17 @@
                 <li><a href="skills.html" class="interactive text-textDim hover:text-textMain transition">SKILLS</a></li>
                 <li><a href="vision.html" class="interactive text-textDim hover:text-textMain transition">VISION</a></li>
             </ul>
-            <button id="theme-toggle" class="interactive text-textDim hover:text-textMain text-xl" title="Toggle Theme">🌙</button>
+            <div class="flex items-center gap-4 border-l border-borderHighlight pl-4">
+                <button id="lang-toggle" class="interactive text-textDim hover:text-textMain font-bold text-xs" title="Toggle Language">KO</button>
+                <button id="theme-toggle" class="interactive text-textDim hover:text-textMain text-xl" title="Toggle Theme">🌙</button>
+            </div>
         </div>
     </nav>
     <div id="scroll-progress" class="fixed top-0 left-0 h-1.5 bg-excellent z-[100] transition-all duration-100 shadow-[0_0_10px_#4ade80]" style="width: 0%;"></div>
 
     <main class="mt-24 mb-12 max-w-5xl w-full mx-auto grid grid-cols-1 gap-6 px-4 z-10 relative">
-        <section class="bg-card border border-borderLight rounded-lg p-8 shadow-lg transition-colors duration-300">
+        <!-- Profile Card (Hover Effect) -->
+        <section class="bg-card border border-borderLight rounded-lg p-8 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:border-borderHighlight">
             <div class="flex flex-col md:flex-row items-center gap-8 mb-8">
                 <div class="w-32 h-32 rounded-lg border-2 border-borderLight overflow-hidden bg-black shrink-0 shadow-lg relative group interactive">
                     <img id="profile-img" src="https://placehold.co/150x150/1a1a1a/ffffff?text=Photo" alt="Profile" class="w-full h-full object-cover grayscale transition duration-400 group-hover:grayscale-0 group-hover:scale-105">
@@ -73,11 +78,11 @@
                     <h1 class="text-4xl font-bold mb-1 text-textMain">유현서</h1>
                     <div class="text-textDim text-sm mb-4">Yoo Hyun-seo</div>
                     <div class="flex gap-2 flex-wrap justify-center md:justify-start">
-                        <span class="text-textMain border border-textDim px-3 py-1 rounded text-xs font-semibold uppercase">SSAFY 16th</span>
-                        <span class="text-textMain border border-textDim px-3 py-1 rounded text-xs font-semibold uppercase">Seoul 10th Class</span>
+                        <span class="text-textMain border border-textDim px-3 py-1 rounded text-xs font-semibold uppercase backdrop-blur-sm bg-card/50">SSAFY 16th</span>
+                        <span class="text-textMain border border-textDim px-3 py-1 rounded text-xs font-semibold uppercase backdrop-blur-sm bg-card/50">Seoul 10th Class</span>
                     </div>
                 </div>
-                <div class="flex-1 bg-body p-4 rounded border border-borderLight text-sm text-textDim leading-relaxed text-center md:text-left">
+                <div class="flex-1 bg-body p-4 rounded border border-borderLight text-sm text-textDim leading-relaxed text-center md:text-left shadow-inner">
                     "항상 '왜?'라는 것을 중요하게 여기고 새로운 경험을 좋아합니다."
                 </div>
             </div>
@@ -98,7 +103,7 @@
                 <div class="flex border-b border-borderLight pb-4">
                     <div class="flex-1 text-textDim text-sm font-medium">주발 (선호 언어)</div>
                     <div class="flex-[2] flex gap-6">
-                        <!-- 서브 언어 (C++) - 노란빛 도는 초록색, 상단 1/4 비움 -->
+                        <!-- 서브 언어 (C++) -->
                         <div class="flex flex-col items-center gap-1 group interactive">
                             <span class="text-xs text-textDim font-bold transition">C++</span>
                             <svg viewBox="0 0 30 50" width="24" height="40">
@@ -112,7 +117,7 @@
                             </svg>
                             <span class="text-sm font-bold text-[#84cc16]">15 <span class="text-[0.6rem] text-textDim font-normal">(서브/왼발)</span></span>
                         </div>
-                        <!-- 메인 언어 (Java) - 진한 초록색, 꽉 채움 -->
+                        <!-- 메인 언어 (Java) -->
                         <div class="flex flex-col items-center gap-1 group interactive">
                             <span class="text-xs text-textMain font-bold transition">Java</span>
                             <svg viewBox="0 0 30 50" width="24" height="40">
@@ -125,54 +130,92 @@
             </div>
         </section>
 
-        <section class="bg-card border border-borderLight rounded-lg p-8 shadow-lg transition-colors duration-300 mt-4">
+        <!-- Gantt Chart Section (Hover Effect) -->
+        <section class="bg-card border border-borderLight rounded-lg p-8 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:border-borderHighlight mt-4">
             <div class="flex justify-between items-end mb-6">
-                <h2 class="text-lg font-bold text-textDim uppercase tracking-wide border-l-4 border-textMain pl-3">Career Timeline (Gantt)</h2>
+                <h2 class="text-lg font-bold text-textDim uppercase tracking-wide border-l-4 border-textMain pl-3">Career Timeline</h2>
                 <span class="text-xs text-excellent animate-pulse">👉 막대나 점을 클릭하여 상세 정보 열람</span>
             </div>
             
             <!-- Gantt Chart Container -->
-            <div class="relative w-full overflow-x-auto gantt-scroll bg-body border border-borderLight rounded-lg p-4 mb-4">
-                <div class="min-w-[650px] relative">
-                    <!-- X-Axis (Years) -->
-                    <div class="flex justify-between text-xs text-textDim font-medium border-b border-borderLight pb-2 mb-4">
-                        <span>2016</span><span>2018</span><span>2020</span><span>2022</span><span>2024</span><span>2026</span>
+            <div class="relative w-full overflow-x-auto gantt-scroll bg-body border border-borderLight rounded-lg p-4 mb-4 shadow-inner">
+                <div class="min-w-[700px] relative">
+                    
+                    <!-- X-Axis (Detailed Ruler) -->
+                    <div class="relative h-[30px] border-b border-borderHighlight mb-4 mt-2">
+                        <!-- Ticks & Labels -->
+                        <div class="absolute flex flex-col items-center transform -translate-x-1/2" style="left: 1.5%;">
+                            <span class="text-[9px] text-textDim mb-1">16.03</span>
+                            <div class="w-[1px] h-2 bg-borderHighlight"></div>
+                        </div>
+                        <div class="absolute flex flex-col items-center transform -translate-x-1/2" style="left: 28.7%;">
+                            <span class="text-[9px] text-textDim mb-1">19.03</span>
+                            <div class="w-[1px] h-2 bg-borderHighlight"></div>
+                        </div>
+                        <div class="absolute flex flex-col items-center transform -translate-x-1/2" style="left: 59.0%;">
+                            <span class="text-[9px] text-textDim mb-1">22.07</span>
+                            <div class="w-[1px] h-2 bg-borderHighlight"></div>
+                        </div>
+                        <div class="absolute flex flex-col items-center transform -translate-x-1/2" style="left: 72.7%;">
+                            <span class="text-[9px] text-textDim mb-1">24.01</span>
+                            <div class="w-[1px] h-2 bg-borderHighlight"></div>
+                        </div>
+                        <div class="absolute flex flex-col items-center transform -translate-x-1/2" style="left: 86.3%;">
+                            <span class="text-[9px] text-textDim mb-1">25.07</span>
+                            <div class="w-[1px] h-2 bg-borderHighlight"></div>
+                        </div>
+                        <div class="absolute flex flex-col items-center transform -translate-x-1/2" style="left: 91.6%;">
+                            <span class="text-[9px] text-textDim mb-1">26.02</span>
+                            <div class="w-[1px] h-2 bg-borderHighlight"></div>
+                        </div>
+                        <div class="absolute flex flex-col items-center transform -translate-x-1/2" style="left: 95.4%;">
+                            <span class="text-[9px] text-textDim mb-1">26.07</span>
+                            <div class="w-[1px] h-2 bg-borderHighlight"></div>
+                        </div>
                     </div>
 
                     <!-- Chart Area -->
-                    <div class="relative h-[110px]">
-                        <!-- Row 1: Education (고등학교, 대학교) -->
-                        <div onclick="showGanttDetail('guam')" class="absolute top-0 h-7 bg-gray-600/80 border border-gray-400 hover:bg-gray-500 rounded text-[10px] text-white font-bold flex items-center justify-center cursor-pointer transition shadow-sm z-10" style="left: 1.5%; width: 26.5%" title="서울구암고등학교">
+                    <div class="relative h-[130px]">
+                        
+                        <!-- Row 1: Education -->
+                        <div onclick="showGanttDetail('guam')" class="absolute top-0 h-7 bg-gray-600/80 border border-gray-400 hover:bg-gray-500 rounded text-[10px] text-white font-bold flex items-center justify-center cursor-pointer transition shadow-sm z-10" style="left: 1.5%; width: 27.2%" title="서울구암고등학교">
                             <span class="hidden sm:inline">서울구암고</span><span class="sm:hidden">구암고</span>
                         </div>
-                        <div onclick="showGanttDetail('univ')" class="absolute top-0 h-7 bg-blue-800/80 border border-blue-400 hover:bg-blue-600 rounded text-[11px] text-white font-bold flex items-center justify-center cursor-pointer transition shadow-sm z-10" style="left: 28.7%; width: 62.8%" title="한성대학교">
+                        <div onclick="showGanttDetail('univ')" class="absolute top-0 h-7 bg-blue-800/80 border border-blue-400 hover:bg-blue-600 rounded text-[11px] text-white font-bold flex items-center justify-center cursor-pointer transition shadow-sm z-10" style="left: 28.7%; width: 62.9%" title="한성대학교 입학~졸업">
                             한성대학교 (CS)
                         </div>
 
-                        <!-- Row 2: Activities (군대, 인턴) -->
-                        <div onclick="showGanttDetail('army')" class="absolute top-10 h-7 bg-green-800/80 border border-green-400 hover:bg-green-600 rounded text-[10px] text-white font-bold flex items-center justify-center cursor-pointer transition shadow-sm z-10" style="left: 59.0%; width: 13.6%" title="군 복무">
+                        <!-- Row 2: Activities -->
+                        <div onclick="showGanttDetail('army')" class="absolute top-10 h-7 bg-green-800/80 border border-green-400 hover:bg-green-600 rounded text-[10px] text-white font-bold flex items-center justify-center cursor-pointer transition shadow-sm z-10" style="left: 59.0%; width: 13.7%" title="군 복무 (육군 장갑차조종수)">
                             군 복무
                         </div>
-                        <div onclick="showGanttDetail('intern')" class="absolute top-10 h-7 bg-purple-800/80 border border-purple-400 hover:bg-purple-600 rounded text-[10px] text-white font-bold flex items-center justify-center cursor-pointer transition shadow-sm z-10" style="left: 86.3%; width: 5.3%" title="인턴십">
+                        <div onclick="showGanttDetail('intern')" class="absolute top-10 h-7 bg-purple-800/80 border border-purple-400 hover:bg-purple-600 rounded text-[10px] text-white font-bold flex items-center justify-center cursor-pointer transition shadow-sm z-10" style="left: 86.3%; width: 5.3%" title="넥스프론 인턴십">
                             인턴
                         </div>
 
-                        <!-- Row 3: Events Axis Line -->
-                        <div class="absolute top-[90px] w-full h-[2px] bg-borderLight"></div>
+                        <!-- Row 3: Event Guide Line -->
+                        <div class="absolute top-[100px] w-full border-t border-dashed border-borderHighlight opacity-50 z-0"></div>
 
                         <!-- Events (Dots) -->
-                        <!-- Awards Cluster (2024.11) -->
-                        <div onclick="showGanttDetail('awards')" class="absolute top-[85px] w-3 h-3 bg-yellow-400 rounded-full border-2 border-card shadow-[0_0_10px_#facc15] cursor-pointer hover:scale-150 hover:bg-white transition transform -translate-x-1/2 z-20" style="left: 80.3%" title="코딩대회 및 공모전 수상"></div>
                         
-                        <!-- SSAFY (2026.07) -->
-                        <div onclick="showGanttDetail('ssafy')" class="absolute top-[85px] w-3 h-3 bg-excellent rounded-full border-2 border-card shadow-[0_0_10px_#4ade80] cursor-pointer hover:scale-150 hover:bg-white transition transform -translate-x-1/2 z-20" style="left: 95.4%" title="SSAFY 16기 합류"></div>
+                        <!-- Certificates (Blue-ish dots) -->
+                        <div onclick="showGanttDetail('cert1')" class="absolute top-[95px] w-3 h-3 bg-cyan-400 rounded-full border-2 border-card shadow-[0_0_8px_#22d3ee] cursor-pointer hover:scale-150 hover:bg-white transition transform -translate-x-1/2 z-20" style="left: 75.0%" title="리눅스마스터 2급"></div>
+                        <div onclick="showGanttDetail('cert2')" class="absolute top-[95px] w-3 h-3 bg-cyan-500 rounded-full border-2 border-card shadow-[0_0_8px_#06b6d4] cursor-pointer hover:scale-150 hover:bg-white transition transform -translate-x-1/2 z-20" style="left: 88.2%" title="정보처리기사"></div>
+                        <div onclick="showGanttDetail('cert3')" class="absolute top-[95px] w-3 h-3 bg-cyan-600 rounded-full border-2 border-card shadow-[0_0_8px_#0891b2] cursor-pointer hover:scale-150 hover:bg-white transition transform -translate-x-1/2 z-20" style="left: 92.4%" title="SW개발_L5_20V1"></div>
+
+                        <!-- Awards Cluster (Yellow dots) -->
+                        <div onclick="showGanttDetail('awards')" class="absolute top-[95px] w-3 h-3 bg-yellow-400 rounded-full border-2 border-card shadow-[0_0_10px_#facc15] cursor-pointer hover:scale-150 hover:bg-white transition transform -translate-x-1/2 z-20" style="left: 80.6%" title="코딩대회 및 공모전 수상"></div>
+                        
+                        <!-- SSAFY (Green dot) -->
+                        <div onclick="showGanttDetail('ssafy')" class="absolute top-[95px] w-3 h-3 bg-excellent rounded-full border-2 border-card shadow-[0_0_10px_#4ade80] cursor-pointer hover:scale-150 hover:bg-white transition transform -translate-x-1/2 z-20" style="left: 95.8%" title="SSAFY 16기 합류"></div>
                     </div>
                 </div>
             </div>
 
             <!-- Detail Information Box -->
-            <div id="gantt-info" class="p-5 bg-body rounded border-l-4 border-borderHighlight shadow-inner min-h-[120px] flex flex-col justify-center transition-colors duration-300">
-                <div class="text-textDim text-sm text-center font-medium">👆 타임라인의 막대나 점을 클릭하여 상세 스토리를 열람하세요.</div>
+            <div id="gantt-info" class="p-5 bg-body rounded border-l-4 border-borderHighlight shadow-inner min-h-[120px] flex flex-col justify-center transition-colors duration-300 relative overflow-hidden">
+                <div class="text-textDim text-sm text-center font-medium z-10 animate-pulse">[ 대기 중... 데이터를 선택하세요 ]</div>
+                <div class="absolute -right-4 -bottom-4 text-[100px] opacity-[0.03] pointer-events-none select-none text-textMain z-0">📋</div>
             </div>
         </section>
     </main>
@@ -189,8 +232,9 @@
             document.getElementById('scroll-progress').style.width = scrolled + '%';
         });
 
-        // Theme Toggle
+        // Theme Toggle & Lang Toggle
         const themeBtn = document.getElementById('theme-toggle');
+        const langBtn = document.getElementById('lang-toggle');
         const updateThemeIcon = (isDark) => themeBtn.textContent = isDark ? '☀️' : '🌙';
         
         themeBtn.addEventListener('click', () => {
@@ -205,26 +249,43 @@
             updateThemeIcon(false);
         }
 
+        langBtn.addEventListener('click', () => {
+            langBtn.textContent = langBtn.textContent === 'KO' ? 'EN' : 'KO';
+            // 실제 구현 시 여기에 텍스트 변환 로직 추가
+        });
+
         // Gantt Chart Interactive Logic
         const ganttData = {
-            guam: { title: "서울구암고등학교 졸업", date: "2016.03 ~ 2019.02", desc: "이과 과정을 이수하며 논리적 사고의 기반을 다짐." },
-            univ: { title: "한성대학교 컴퓨터공학부", date: "2019.03 ~ 2026.02", desc: "컴퓨터 과학의 기초를 다지며, 개발자로서의 비전을 확립 (GPA 3.52 / 4.5)." },
-            army: { title: "군 복무", date: "2022.07 ~ 2024.01", desc: "성실하게 병역의 의무를 마치며 책임감과 협동심을 배양." },
-            intern: { title: "인턴십", date: "2025.07 ~ 2026.02", desc: "실무 환경에서의 개발 프로세스 및 협업 경험 축적." },
-            awards: { title: "알고리즘 및 공모전 수상 랠리", date: "2024.11.19 ~ 2024.11.28", desc: "<ul class='list-disc pl-5 mt-2 space-y-1 text-sm'><li><strong>24.11.19:</strong> 2024 HSUPC 1등 (알고리즘 소모임 창설 및 주도)</li><li><strong>24.11.28:</strong> 한성SW 페스티벌 코딩대회 우수상 (52명 중 7등)</li><li><strong>24.11.28:</strong> 한성SW 페스티벌 공모전 우수상 (LLM 기반 모의고사 생성, 27팀 중 5등)</li></ul>" },
-            ssafy: { title: "SSAFY 16기 합류", date: "2026.07 ~ 현재", desc: "알고리즘 및 백엔드 심화 학습 시작. 팀 프로젝트를 통한 실무 협업 능력 배양 중." }
+            guam: { title: "서울구암고등학교 졸업", date: "2016.03 ~ 2019.02", desc: "이과 과정을 이수하며 논리적 사고의 기반을 다짐. 코딩 동아리에 참여하여 Java와 Python의 기초를 처음 접했으며, 타 학교와의 연합 동아리를 통해 Python과 스크래치를 교류하며 프로그래밍에 대한 깊은 흥미를 느낌." },
+            univ: { title: "한성대학교 컴퓨터공학부", date: "2019.03 ~ 2026.02", desc: "컴퓨터 과학의 기초를 다지며, 백엔드 개발자로서의 비전을 확립 (GPA 3.52 / 4.5)." },
+            army: { title: "군 복무 (육군)", date: "2022.07 ~ 2024.01", desc: "육군 장갑차조종수로 복무 후 만기전역. 거대한 장비를 다루는 훈련 속에서 어떠한 상황에서도 흔들리지 않는 강인한 책임감과 인내심을 깊이 새김." },
+            intern: { title: "넥스프론 (NexFron) 인턴십", date: "2025.07 ~ 2026.02", desc: "실제 서비스 환경에서 <strong>인증 및 인가(Auth) 체계</strong>를 구축하고, 다양한 백엔드 아키텍처 패턴을 주도적으로 학습 및 적용하며 실무 생태계를 깊이 있게 경험함." },
+            cert1: { title: "리눅스마스터 2급 취득", date: "2024.03.29", desc: "서버 운영 체제인 리눅스 시스템에 대한 이해도와 활용 능력을 증명." },
+            cert2: { title: "정보처리기사 취득", date: "2025.09.12", desc: "소프트웨어 개발 전 과정에 걸친 국가 공인 기술 자격을 획득하며 탄탄한 CS 기반을 입증." },
+            cert3: { title: "SW개발_L5_20V1 (일학습병행) 수료", date: "2026.02.27", desc: "실무 중심의 소프트웨어 개발 훈련 과정을 성공적으로 이수." },
+            awards: { title: "알고리즘 및 공모전 수상 랠리", date: "2024.11.19 ~ 2024.11.28", desc: "<ul class='list-disc pl-5 mt-2 space-y-1 text-sm z-10 relative'><li><strong>24.11.19:</strong> 2024 HSUPC 1등 (알고리즘 소모임 창설 및 주도)</li><li><strong>24.11.28:</strong> 한성SW 페스티벌 코딩대회 우수상 (52명 중 7등)</li><li><strong>24.11.28:</strong> 한성SW 페스티벌 공모전 우수상 (LLM 기반 모의고사 생성, 27팀 중 5등)</li></ul>" },
+            ssafy: { title: "SSAFY 16기 합류", date: "2026.07 ~ 현재", desc: "알고리즘 및 백엔드 심화 학습 시작. 훌륭한 동기들과 팀 프로젝트를 통해 실무 협업 능력을 배양 중." }
         };
 
         function showGanttDetail(key) {
             const info = ganttData[key];
             const box = document.getElementById('gantt-info');
+            
+            let borderColor = 'border-excellent';
+            let dateColor = 'text-excellent';
+            if(key.startsWith('cert')) {
+                borderColor = 'border-cyan-500'; dateColor = 'text-cyan-500';
+            } else if (key === 'awards') {
+                borderColor = 'border-yellow-400'; dateColor = 'text-yellow-500';
+            }
+
             box.innerHTML = `
-                <div class="text-xs font-bold text-excellent mb-1 tracking-wider">${info.date}</div>
-                <h3 class="font-bold text-textMain text-lg mb-2">${info.title}</h3>
-                <div class="text-sm text-textDim leading-relaxed">${info.desc}</div>
+                <div class="text-xs font-bold ${dateColor} mb-1 tracking-wider z-10">${info.date}</div>
+                <h3 class="font-bold text-textMain text-lg mb-2 z-10">${info.title}</h3>
+                <div class="text-sm text-textDim leading-relaxed z-10">${info.desc}</div>
+                <div class="absolute -right-4 -bottom-4 text-[100px] opacity-[0.03] pointer-events-none select-none text-textMain z-0">📋</div>
             `;
-            box.classList.remove('border-borderHighlight');
-            box.classList.add('border-excellent');
+            box.className = `p-5 bg-body rounded border-l-4 ${borderColor} shadow-inner min-h-[120px] flex flex-col justify-center transition-all duration-300 relative overflow-hidden`;
         }
 
         // Particle Background Canvas
@@ -268,7 +329,7 @@
         animate();
         window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
 
-        // Soccer Ball Interactive Logic (Physics Engine with SessionStorage)
+        // Soccer Ball Interactive Logic
         const ball = document.getElementById('soccer-ball');
         const ballShadow = document.getElementById('ball-shadow');
         
@@ -286,12 +347,8 @@
         });
 
         function updateBall() {
-            ballState.vy += gravity;
-            ballState.x += ballState.vx;
-            ballState.y += ballState.vy;
-            
-            ballState.vx *= friction;
-            ballState.vy *= friction;
+            ballState.vy += gravity; ballState.x += ballState.vx; ballState.y += ballState.vy;
+            ballState.vx *= friction; ballState.vy *= friction;
 
             const ground = window.innerHeight - 60;
             const rightWall = window.innerWidth - 60;
@@ -303,18 +360,11 @@
                 if (Math.abs(ballState.vy) < 1.5) ballState.vy = 0; 
                 ballState.vx *= groundFriction;
             }
-
-            if (ballState.x > rightWall) {
-                ballState.x = rightWall;
-                ballState.vx *= bounce;
-            } else if (ballState.x < leftWall) {
-                ballState.x = leftWall;
-                ballState.vx *= bounce;
-            }
+            if (ballState.x > rightWall) { ballState.x = rightWall; ballState.vx *= bounce; } 
+            else if (ballState.x < leftWall) { ballState.x = leftWall; ballState.vx *= bounce; }
 
             ballState.rotation += ballState.vx * 2;
             
-            // 바닥 그림자 계산 로직
             const heightFromGround = Math.max(0, ground - ballState.y);
             const shadowScale = Math.max(0.3, 1 - (heightFromGround / window.innerHeight) * 1.5);
             const shadowOpacity = Math.max(0, 0.6 - (heightFromGround * 0.001));
@@ -333,17 +383,13 @@
         updateBall();
 
         document.addEventListener('mousemove', (e) => {
-            const ballCenterX = ballState.x + 25; 
-            const ballCenterY = ballState.y + 25;
-            
-            const dx = ballCenterX - e.clientX;
-            const dy = ballCenterY - e.clientY;
+            const ballCenterX = ballState.x + 25; const ballCenterY = ballState.y + 25;
+            const dx = ballCenterX - e.clientX; const dy = ballCenterY - e.clientY;
             const dist = Math.sqrt(dx * dx + dy * dy);
             
             if (dist < 60) {
                 const force = Math.min(20, 400 / (dist + 1)); 
-                ballState.vx += (dx / dist) * force;
-                ballState.vy += (dy / dist) * force - 3; 
+                ballState.vx += (dx / dist) * force; ballState.vy += (dy / dist) * force - 3; 
             }
         });
 
