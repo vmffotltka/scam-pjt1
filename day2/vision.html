@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>유현서 - Vision & Mental</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        body: '#0a0a0a', card: '#121212', cardHover: '#1a1a1a',
+                        textMain: '#ffffff', textDim: '#a3a3a3',
+                        borderLight: '#333333', borderHighlight: '#555555',
+                        excellent: '#4ade80', strong: '#dc2626', weak: '#facc15'
+                    },
+                    fontFamily: { sans: ['Inter', 'Noto Sans KR', 'sans-serif'], }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { cursor: crosshair; }
+        .interactive:hover { cursor: pointer; }
+        
+        /* 스카우팅 블러 효과 CSS */
+        .scouting-locked .scouting-content {
+            filter: blur(8px);
+            opacity: 0.4;
+            pointer-events: none;
+            user-select: none;
+        }
+        .scouting-content { transition: filter 0.8s ease, opacity 0.8s ease; }
+    </style>
+</head>
+<body class="bg-body text-textMain font-sans min-h-screen flex flex-col">
+
+    <nav class="fixed top-0 w-full bg-black border-b border-borderLight z-50 px-6 py-4 flex justify-between items-center shadow-lg">
+        <div class="text-textDim font-bold tracking-widest text-lg">SCOUTING REPORT</div>
+        <ul class="flex gap-8 text-sm font-semibold tracking-wider">
+            <li><a href="index.html" class="interactive text-textDim hover:text-textMain transition">PROFILE</a></li>
+            <li><a href="skills.html" class="interactive text-textDim hover:text-textMain transition">SKILLS</a></li>
+            <li><a href="vision.html" class="interactive text-textMain border-b-2 border-textMain pb-1">VISION</a></li>
+        </ul>
+    </nav>
+    <div id="scroll-progress" class="fixed top-[60px] left-0 h-1 bg-excellent z-50 transition-all duration-100" style="width: 0%;"></div>
+
+    <main class="mt-24 mb-12 max-w-4xl w-full mx-auto flex flex-col gap-6 px-4">
+        
+        <!-- 상태 및 멘탈 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <section class="bg-card border border-borderLight rounded-lg p-6 shadow-lg interactive hover:border-borderHighlight transition">
+                <h2 class="text-lg font-bold text-textDim uppercase tracking-wide border-l-4 border-white pl-3 mb-6">Mental Attributes</h2>
+                <div class="flex gap-3 flex-wrap mb-4">
+                    <span class="bg-body border border-borderLight px-3 py-1 rounded text-sm text-textDim">체스</span>
+                    <span class="bg-body border border-borderLight px-3 py-1 rounded text-sm text-textDim">직관</span>
+                    <span class="bg-body border border-borderLight px-3 py-1 rounded text-sm text-textDim">복기</span>
+                </div>
+                <p class="text-sm text-textDim leading-relaxed">
+                    2년 넘게 꾸준히 체스(주력 오프닝: e4)를 즐기고 있습니다. 히카루 나카무라의 철학처럼, 직관적인 문제 해결 후에는 반드시 코드를 복기하며 발전을 도모합니다.
+                </p>
+                <div class="mt-4 p-3 bg-black rounded border border-borderLight text-sm">
+                    사기: <span class="text-excellent font-bold">최상 🟢</span> (프로젝트 기대감)
+                </div>
+            </section>
+
+            <section class="bg-card border border-borderLight rounded-lg p-6 shadow-lg interactive hover:border-borderHighlight transition">
+                <h2 class="text-lg font-bold text-textDim uppercase tracking-wide border-l-4 border-white pl-3 mb-6">Physical & Goals</h2>
+                <div class="flex gap-3 flex-wrap mb-4">
+                    <span class="bg-body border border-borderLight px-3 py-1 rounded text-sm text-textDim">주 6일 맨몸운동</span>
+                    <span class="bg-body border border-borderLight px-3 py-1 rounded text-sm text-textDim">성실함의 증명</span>
+                </div>
+                <p class="text-sm text-textDim leading-relaxed">
+                    매일 30분씩 주 6일 운동을 꾸준히 수행 중입니다. 현재 퀘스트는 '정자세 풀업 1개' 성공입니다. 끈기와 체력은 백엔드 개발자의 필수 소양이라 믿습니다.
+                </p>
+                <div class="mt-4 p-3 bg-black rounded border border-borderLight text-sm flex items-center gap-3">
+                    체력: 85% 
+                    <div class="w-full h-2 bg-body rounded overflow-hidden">
+                        <div class="h-full bg-excellent w-[85%]"></div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- 히든 특성 (스카우팅 상호작용) -->
+        <section class="bg-card border border-borderLight rounded-lg p-6 shadow-lg mt-4">
+            <h2 class="text-lg font-bold text-textDim uppercase tracking-wide border-l-4 border-excellent pl-3 mb-4">Hidden Traits (히든 특성)</h2>
+            <div id="scouting-wrapper" class="relative scouting-locked bg-black rounded-lg p-6 border border-borderHighlight">
+                
+                <!-- 스카우팅 버튼 오버레이 -->
+                <div id="scout-overlay" class="absolute top-0 left-0 w-full h-full flex justify-center items-center z-10">
+                    <button id="scout-btn" class="interactive bg-white text-black px-6 py-2 rounded font-bold text-sm shadow-[0_0_15px_rgba(255,255,255,0.5)] hover:bg-gray-300 transition hover:scale-105">
+                        정밀 스카우팅 시작
+                    </button>
+                </div>
+
+                <!-- 숨겨진 콘텐츠 -->
+                <div id="scouting-content" class="scouting-content flex flex-col gap-4">
+                    <div class="border-b border-borderLight pb-4">
+                        <strong class="text-white text-lg block mb-1">성장 갈증 (Adaptability & Ambition)</strong>
+                        <span class="text-sm text-textDim">"왜?"라는 질문을 즐기는 토론형 개발자. 문제 해결 후 코드를 반드시 복기하며 팀원들과의 소통을 통해 폭발적으로 성장함.</span>
+                    </div>
+                    <div>
+                        <strong class="text-white text-lg block mb-1">피아노 (예술적 감각)</strong>
+                        <span class="text-sm text-textDim">6세부터 다져온 섬세함. 현재 폼은 하락 중이나 그 감각이 코드의 가독성과 아키텍처 설계에 녹아있음.</span>
+                    </div>
+                    <div class="mt-2 text-xs text-excellent font-bold tracking-widest text-right">
+                        [ SCOUTING COMPLETE ]
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // Scroll Progress
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('scroll-progress').style.width = scrolled + '%';
+        });
+
+        // Scouting Interaction
+        const wrapper = document.getElementById('scouting-wrapper');
+        const btn = document.getElementById('scout-btn');
+        const overlay = document.getElementById('scout-overlay');
+        
+        btn.addEventListener('click', () => {
+            btn.innerHTML = '스카우팅 데이터 로드 중...';
+            btn.style.opacity = '0.5';
+            
+            // 약간의 딜레이를 주어 분석하는 느낌 추가
+            setTimeout(() => {
+                wrapper.classList.remove('scouting-locked');
+                overlay.style.display = 'none';
+            }, 800);
+        });
+    </script>
+</body>
+</html>
