@@ -53,14 +53,16 @@
                 <li><a href="skills.html" class="interactive text-textMain border-b-2 border-textMain pb-1">SKILLS</a></li>
                 <li><a href="vision.html" class="interactive text-textDim hover:text-textMain transition">VISION</a></li>
             </ul>
-            <button id="theme-toggle" class="interactive text-textDim hover:text-textMain text-xl">🌙</button>
+            <div class="flex items-center gap-4 border-l border-borderHighlight pl-4">
+                <button id="theme-toggle" class="interactive text-textDim hover:text-textMain text-xl" title="Toggle Theme">🌙</button>
+            </div>
         </div>
     </nav>
     <div id="scroll-progress" class="fixed top-0 left-0 h-1.5 bg-excellent z-[100] transition-all duration-100 shadow-[0_0_10px_#4ade80]" style="width: 0%;"></div>
 
     <main class="mt-24 mb-12 max-w-5xl w-full mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 px-4 z-10 relative">
         
-        <section class="bg-card border border-borderLight rounded-lg p-6 shadow-lg interactive hover:border-borderHighlight transition hover:-translate-y-1 duration-300">
+        <section class="bg-card border border-borderLight rounded-lg p-6 shadow-lg interactive hover:border-borderHighlight transition-all hover:-translate-y-1 duration-300 hover:shadow-2xl">
             <h2 class="text-lg font-bold text-textDim uppercase tracking-wide border-l-4 border-textMain pl-3 mb-6">Tactical Evolution</h2>
             <div class="flex flex-col xl:flex-row gap-6 items-center">
                 <div class="w-[120px] h-[160px] border-2 border-green-800 rounded bg-green-900/20 relative shrink-0">
@@ -81,17 +83,16 @@
                     <p class="text-xs text-textDim mb-2">개발 생태계 포지션 진화 (Role History)</p>
                     <div class="flex items-center justify-center xl:justify-start gap-2 flex-wrap text-sm mb-4">
                         <span class="px-2 py-1 border border-borderHighlight text-textDim rounded text-xs">Back & Front</span> <span>▶</span>
-                        <span class="px-2 py-1 border border-textDim text-textMain rounded text-xs">Back 위주</span> <span>▶</span>
                         <span class="px-2 py-1 border border-excellent text-excellent bg-excellent/10 rounded font-bold text-xs">Pure Backend</span>
                     </div>
                     <p class="text-sm text-textDim leading-relaxed">
-                        초기에는 프론트엔드와 백엔드를 모두 다루었으나, 여러 프로젝트를 거듭하며 자연스럽게 백엔드 개발에 더 큰 흥미와 적성을 느꼈습니다. 현재는 백엔드 비중을 대폭 늘려 전문적인 백엔드 개발자로 나아가고 있습니다.
+                        초기에는 프론트엔드와 백엔드를 모두 다루었으나, 여러 프로젝트를 거듭하며 자연스럽게 아키텍처와 데이터 처리에 흥미를 느껴 현재는 백엔드 개발에 완벽하게 정착하였습니다.
                     </p>
                 </div>
             </div>
         </section>
 
-        <section class="bg-card border border-borderLight rounded-lg p-6 shadow-lg interactive hover:border-borderHighlight transition hover:-translate-y-1 duration-300">
+        <section class="bg-card border border-borderLight rounded-lg p-6 shadow-lg interactive hover:border-borderHighlight transition-all hover:-translate-y-1 duration-300 hover:shadow-2xl">
             <h2 class="text-lg font-bold text-textDim uppercase tracking-wide border-l-4 border-textMain pl-3 mb-6">Technical & Algorithm</h2>
             <div class="flex justify-center items-center pointer-events-none mb-4">
                 <canvas id="techRadarCanvas" width="300" height="240"></canvas>
@@ -103,23 +104,25 @@
         </section>
     </main>
 
-    <!-- Interactive Soccer Ball -->
-    <div id="ball-shadow" class="fixed top-0 left-0 pointer-events-none z-[9998] rounded-[50%] bg-black/40 blur-sm transition-opacity duration-75"></div>
-    <div id="soccer-ball" class="fixed top-0 left-0 text-5xl z-[9999] select-none" style="cursor: url('data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'32\' height=\'32\'><text y=\'24\' font-size=\'24\'>🥾</text></svg>') 16 16, pointer;" title="차보세요!">⚽</div>
+    <div id="ball-shadow" class="fixed top-0 left-0 pointer-events-none z-[50] rounded-[50%] bg-black/50 blur-[4px] transition-opacity duration-75"></div>
+    <div id="soccer-ball" class="fixed top-0 left-0 text-5xl z-[60] select-none" style="cursor: url('data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'32\' height=\'32\'><text y=\'24\' font-size=\'24\'>🥾</text></svg>') 16 16, pointer;" title="차보세요!">⚽</div>
 
     <script>
         // Global scripts (Scroll, Theme, Particles)
         window.addEventListener('scroll', () => { document.getElementById('scroll-progress').style.width = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight) * 100) + '%'; });
         
         const themeBtn = document.getElementById('theme-toggle');
+        const updateThemeIcon = (isDark) => themeBtn.textContent = isDark ? '☀️' : '🌙';
+
         themeBtn.addEventListener('click', () => {
             document.documentElement.classList.toggle('dark');
             const isDark = document.documentElement.classList.contains('dark');
             localStorage.setItem('theme', isDark ? 'dark' : 'light');
-            themeBtn.textContent = isDark ? '☀️' : '🌙';
-            drawRadar(); // 테마 변경 시 차트 다시 그리기
+            updateThemeIcon(isDark);
+            drawRadar(); 
         });
-        if (localStorage.getItem('theme') === 'light') { document.documentElement.classList.remove('dark'); themeBtn.textContent = '🌙'; } else { themeBtn.textContent = '☀️'; }
+        if (localStorage.getItem('theme') === 'light') { document.documentElement.classList.remove('dark'); updateThemeIcon(false); } 
+        else { updateThemeIcon(true); }
 
         // Particles
         const canvasP = document.getElementById('particles'); const ctxP = canvasP.getContext('2d');
@@ -146,9 +149,8 @@
             }); requestAnimationFrame(animateP);
         } animateP();
 
-        // Radar Chart with Animation
-        let radarCurrentData = [0, 0, 0, 0, 0, 0]; // 애니메이션 시작값
-        const radarTargetData = [95, 90, 80, 75, 65, 50]; // 목표값
+        let radarCurrentData = [0, 0, 0, 0, 0, 0]; 
+        const radarTargetData = [95, 90, 80, 75, 65, 50]; 
 
         function drawRadar() {
             const canvas = document.getElementById('techRadarCanvas');
@@ -162,7 +164,6 @@
             function animateRadarLoop() {
                 ctx.clearRect(0,0,canvas.width, canvas.height);
                 
-                // 1. 배경 다각형 그리기
                 const drawPoly = (r, isFill) => {
                     ctx.beginPath();
                     for (let i = 0; i < labels.length; i++) {
@@ -175,7 +176,6 @@
                 };
                 drawPoly(maxRadius, true); drawPoly(maxRadius * 0.66, false); drawPoly(maxRadius * 0.33, false);
 
-                // 2. 중심선 그리기
                 ctx.beginPath();
                 for (let i = 0; i < labels.length; i++) {
                     ctx.moveTo(centerX, centerY);
@@ -183,11 +183,9 @@
                 }
                 ctx.strokeStyle = isDark ? '#444' : '#ccc'; ctx.stroke();
 
-                // 3. 데이터 영역(초록색) 그리기 애니메이션 연산
                 let animating = false;
                 ctx.beginPath();
                 for (let i = 0; i < labels.length; i++) {
-                    // Easing 효과로 부드럽게 증가
                     if (radarCurrentData[i] < radarTargetData[i]) {
                         radarCurrentData[i] += (radarTargetData[i] - radarCurrentData[i]) * 0.1;
                         if (radarTargetData[i] - radarCurrentData[i] < 0.5) radarCurrentData[i] = radarTargetData[i];
@@ -203,7 +201,6 @@
                 ctx.fillStyle = isDark ? 'rgba(74, 222, 128, 0.3)' : 'rgba(74, 222, 128, 0.5)'; ctx.fill();
                 ctx.strokeStyle = '#4ade80'; ctx.lineWidth = 2; ctx.stroke();
 
-                // 4. 라벨 그리기
                 for (let i = 0; i < labels.length; i++) {
                     const x = centerX + Math.cos(i * angleStep - Math.PI / 2) * (maxRadius + 22), y = centerY + Math.sin(i * angleStep - Math.PI / 2) * (maxRadius + 22);
                     ctx.fillStyle = isDark ? (i===0 ? '#fff':'#a3a3a3') : (i===0 ? '#000':'#4b5563');
@@ -219,7 +216,6 @@
         }
         window.onload = drawRadar;
 
-        // Soccer Ball Interactive Logic (Shared)
         const ball = document.getElementById('soccer-ball');
         const ballShadow = document.getElementById('ball-shadow');
         
