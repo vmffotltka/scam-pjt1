@@ -1,117 +1,222 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>유현서 - Player Profile</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
-                        body: '#0a0a0a', card: '#121212', cardHover: '#1a1a1a',
-                        textMain: '#ffffff', textDim: '#a3a3a3',
-                        borderLight: '#333333', borderHighlight: '#555555',
+                        body: 'var(--bg-body)', card: 'var(--bg-card)', cardHover: 'var(--bg-card-hover)',
+                        textMain: 'var(--text-main)', textDim: 'var(--text-dim)',
+                        borderLight: 'var(--border-light)', borderHighlight: 'var(--border-highlight)',
                         excellent: '#4ade80', strong: '#dc2626', weak: '#facc15'
                     },
-                    fontFamily: {
-                        sans: ['Inter', 'Noto Sans KR', 'sans-serif'],
-                    }
+                    fontFamily: { sans: ['Inter', 'Noto Sans KR', 'sans-serif'], }
                 }
             }
         }
     </script>
     <style>
-        /* 커스텀 전술 커서 적용 */
-        body { cursor: crosshair; }
+        :root {
+            --bg-body: #f3f4f6; --bg-card: #ffffff; --bg-card-hover: #f9fafb;
+            --text-main: #111827; --text-dim: #4b5563;
+            --border-light: #d1d5db; --border-highlight: #9ca3af;
+        }
+        .dark {
+            --bg-body: #0a0a0a; --bg-card: #121212; --bg-card-hover: #1a1a1a;
+            --text-main: #ffffff; --text-dim: #a3a3a3;
+            --border-light: #333333; --border-highlight: #555555;
+        }
+        body { cursor: crosshair; background-color: var(--bg-body); color: var(--text-main); transition: background-color 0.3s, color 0.3s; }
         .interactive:hover { cursor: pointer; }
     </style>
 </head>
-<body class="bg-body text-textMain font-sans min-h-screen flex flex-col">
+<body class="font-sans min-h-screen flex flex-col transition-colors duration-300">
+    <canvas id="particles" class="fixed inset-0 pointer-events-none z-0 opacity-30"></canvas>
 
-    <nav class="fixed top-0 w-full bg-black border-b border-borderLight z-50 px-6 py-4 flex justify-between items-center shadow-lg">
+    <nav class="fixed top-0 w-full bg-card border-b border-borderLight z-50 px-6 py-4 flex justify-between items-center shadow-lg transition-colors duration-300">
         <div class="text-textDim font-bold tracking-widest text-lg">SCOUTING REPORT</div>
-        <ul class="flex gap-8 text-sm font-semibold tracking-wider">
-            <li><a href="index.html" class="interactive text-textMain border-b-2 border-textMain pb-1">PROFILE</a></li>
-            <li><a href="skills.html" class="interactive text-textDim hover:text-textMain transition">SKILLS</a></li>
-            <li><a href="vision.html" class="interactive text-textDim hover:text-textMain transition">VISION</a></li>
-        </ul>
+        <div class="flex items-center gap-6">
+            <ul class="flex gap-6 text-sm font-semibold tracking-wider">
+                <li><a href="index.html" class="interactive text-textMain border-b-2 border-textMain pb-1">PROFILE</a></li>
+                <li><a href="skills.html" class="interactive text-textDim hover:text-textMain transition">SKILLS</a></li>
+                <li><a href="vision.html" class="interactive text-textDim hover:text-textMain transition">VISION</a></li>
+            </ul>
+            <button id="theme-toggle" class="interactive text-textDim hover:text-textMain text-xl" title="Toggle Theme">🌙</button>
+        </div>
     </nav>
     <div id="scroll-progress" class="fixed top-[60px] left-0 h-1 bg-excellent z-50 transition-all duration-100" style="width: 0%;"></div>
 
-    <main class="mt-24 mb-12 max-w-4xl w-full mx-auto bg-card border border-borderLight rounded-lg overflow-hidden shadow-[0_10px_30px_rgba(0,0,0,0.8)]">
-        <header class="bg-black px-6 py-4 border-b border-borderLight flex justify-between">
-            <div class="text-textDim font-bold tracking-widest">PLAYER OVERVIEW</div>
-            <div class="text-textMain font-bold tracking-widest">I AM</div>
-        </header>
-
-        <section class="p-8">
-            <div class="flex items-center gap-6 mb-8">
-                <div class="w-28 h-28 rounded-lg border-2 border-borderLight overflow-hidden bg-black shrink-0 shadow-lg relative group interactive">
-                    <img src="https://placehold.co/150x150/1a1a1a/ffffff?text=Photo" alt="Profile" class="w-full h-full object-cover grayscale transition duration-400 group-hover:grayscale-0 group-hover:scale-105">
+    <main class="mt-24 mb-12 max-w-5xl w-full mx-auto grid grid-cols-1 gap-6 px-4 z-10 relative">
+        <section class="bg-card border border-borderLight rounded-lg p-8 shadow-lg transition-colors duration-300">
+            <div class="flex flex-col md:flex-row items-center gap-8 mb-8">
+                <div class="w-32 h-32 rounded-lg border-2 border-borderLight overflow-hidden bg-black shrink-0 shadow-lg relative group interactive">
+                    <img id="profile-img" src="https://placehold.co/150x150/1a1a1a/ffffff?text=Photo" alt="Profile" class="w-full h-full object-cover grayscale transition duration-400 group-hover:grayscale-0 group-hover:scale-105" title="광클해보세요!">
                 </div>
-                <div>
-                    <h1 class="text-3xl font-bold mb-1">유현서</h1>
-                    <div class="text-textDim text-sm mb-3">Yoo Hyun-seo</div>
-                    <div class="flex gap-2 flex-wrap">
+                <div class="flex-1 text-center md:text-left">
+                    <h1 class="text-4xl font-bold mb-1 text-textMain">유현서</h1>
+                    <div class="text-textDim text-sm mb-4">Yoo Hyun-seo</div>
+                    <div class="flex gap-2 flex-wrap justify-center md:justify-start">
                         <span class="text-textMain border border-textDim px-3 py-1 rounded text-xs font-semibold uppercase">SSAFY 16th</span>
                         <span class="text-textMain border border-textDim px-3 py-1 rounded text-xs font-semibold uppercase">Seoul 10th Class</span>
                     </div>
                 </div>
+                <div class="flex-1 bg-body p-4 rounded border border-borderLight text-sm text-textDim leading-relaxed text-center md:text-left">
+                    "새로운 기술이나 아키텍처를 보면 일단 찍어먹어 보는 도전 정신과, 문제를 해결할 때 동료들과 '왜?'를 묻는 논리적 토의를 즐깁니다."
+                </div>
             </div>
 
-            <div class="border-t-2 border-borderLight pt-6 flex flex-col gap-4">
-                <div class="flex border-b border-borderLight pb-4 items-center">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-borderLight pt-6">
+                <div class="flex border-b border-borderLight pb-4">
                     <div class="flex-1 text-textDim text-sm font-medium">신상 정보</div>
-                    <div class="flex-[2] font-medium text-sm">2000.04.06 (만 26세)<br><span class="text-textDim text-xs">179cm / 85kg</span></div>
+                    <div class="flex-[2] font-medium text-sm text-textMain">2000.04.06 (만 26세)<br><span class="text-xs text-textDim">179cm / 85kg</span></div>
                 </div>
-                <div class="flex border-b border-borderLight pb-4 items-center">
-                    <div class="flex-1 text-textDim text-sm font-medium">학력</div>
-                    <div class="flex-[2] font-medium text-sm">한성대학교 컴퓨터공학부 졸업<br><span class="text-textDim text-xs">(GPA 3.52 / 4.5)</span></div>
-                </div>
-                <div class="flex border-b border-borderLight pb-4 items-center">
+                <div class="flex border-b border-borderLight pb-4">
                     <div class="flex-1 text-textDim text-sm font-medium">포지션</div>
-                    <div class="flex-[2] font-medium text-sm">서비스 기업 백엔드 개발자</div>
+                    <div class="flex-[2] font-medium text-sm text-textMain">서비스 기업 백엔드 개발자</div>
                 </div>
-                <div class="flex border-b border-borderLight pb-4 items-center">
+                <div class="flex border-b border-borderLight pb-4">
                     <div class="flex-1 text-textDim text-sm font-medium">예상 몸값</div>
-                    <div class="flex-[2] font-medium text-sm text-white">자유계약 (FA)<br><span class="text-textDim text-xs">(이적료 없음, 즉시 합류 가능)</span></div>
+                    <div class="flex-[2] font-medium text-sm text-textMain">자유계약 (FA)<br><span class="text-xs text-textDim">(이적료 없음, 즉시 합류 가능)</span></div>
                 </div>
-                
-                <div class="flex border-b border-borderLight pb-4 items-center">
+                <div class="flex border-b border-borderLight pb-4">
                     <div class="flex-1 text-textDim text-sm font-medium">주력 도구 (양발)</div>
-                    <div class="flex-[2]">
-                        <div class="flex gap-6 items-center">
-                            <div class="flex flex-col items-center gap-1 group interactive">
-                                <span class="text-xs text-textDim font-bold group-hover:text-white transition">C++</span>
-                                <svg viewBox="0 0 30 50" width="22" height="38"><path d="M15,5 C10,5 5,15 5,30 C5,40 10,48 18,48 C25,48 25,35 25,25 C25,12 22,5 15,5 Z" fill="var(--foot-weak)" stroke="#000" stroke-width="2"/></svg>
-                                <span class="text-sm font-bold text-weak">15 <span class="text-[0.65rem] text-textDim font-normal">(서브/왼발)</span></span>
-                            </div>
-                            <div class="flex flex-col items-center gap-1 group interactive">
-                                <span class="text-xs text-white font-bold">Java</span>
-                                <svg viewBox="0 0 30 50" width="22" height="38"><path d="M15,5 C20,5 25,15 25,30 C25,40 20,48 12,48 C5,48 5,35 5,25 C5,12 8,5 15,5 Z" fill="var(--foot-strong)" stroke="#000" stroke-width="2"/></svg>
-                                <span class="text-sm font-bold text-strong">20 <span class="text-[0.65rem] text-textDim font-normal">(메인/오른발)</span></span>
-                            </div>
+                    <div class="flex-[2] flex gap-6">
+                        <div class="flex flex-col items-center gap-1 group interactive">
+                            <span class="text-xs text-textDim font-bold transition">C++</span>
+                            <svg viewBox="0 0 30 50" width="18" height="30"><path d="M15,5 C10,5 5,15 5,30 C5,40 10,48 18,48 C25,48 25,35 25,25 C25,12 22,5 15,5 Z" fill="var(--foot-weak)"/></svg>
+                            <span class="text-sm font-bold text-weak">15 <span class="text-[0.6rem] text-textDim font-normal">(서브/왼발)</span></span>
+                        </div>
+                        <div class="flex flex-col items-center gap-1 group interactive">
+                            <span class="text-xs text-textMain font-bold">Java</span>
+                            <svg viewBox="0 0 30 50" width="18" height="30"><path d="M15,5 C20,5 25,15 25,30 C25,40 20,48 12,48 C5,48 5,35 5,25 C5,12 8,5 15,5 Z" fill="var(--foot-strong)"/></svg>
+                            <span class="text-sm font-bold text-strong">20 <span class="text-[0.6rem] text-textDim font-normal">(메인/오른발)</span></span>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
+
+        <section class="bg-card border border-borderLight rounded-lg p-8 shadow-lg transition-colors duration-300 mt-4">
+            <h2 class="text-lg font-bold text-textDim uppercase tracking-wide border-l-4 border-textMain pl-3 mb-6">Career Timeline</h2>
+            <div class="relative border-l-2 border-borderHighlight ml-3 space-y-8 py-2">
+                <div class="relative pl-6">
+                    <div class="absolute w-4 h-4 bg-excellent rounded-full -left-[9px] top-1 shadow-[0_0_10px_#4ade80]"></div>
+                    <h3 class="font-bold text-textMain text-md">SSAFY 16기 합류</h3>
+                    <p class="text-sm text-textDim mt-1">알고리즘 및 백엔드 심화 학습 시작. 팀 프로젝트를 통한 실무 협업 능력 배양 중.</p>
+                </div>
+                <div class="relative pl-6">
+                    <div class="absolute w-4 h-4 bg-card border-2 border-borderHighlight rounded-full -left-[9px] top-1"></div>
+                    <h3 class="font-bold text-textMain text-md">2024 HSUPC 1등 (알고리즘 소모임)</h3>
+                    <p class="text-sm text-textDim mt-1">학내 알고리즘 소모임을 창설하여 스터디를 주도하고 프로그래밍 경진대회에서 1등을 수상.</p>
+                </div>
+                <div class="relative pl-6">
+                    <div class="absolute w-4 h-4 bg-card border-2 border-borderHighlight rounded-full -left-[9px] top-1"></div>
+                    <h3 class="font-bold text-textMain text-md">LLM 기반 교육 보조 프로그램 (우수상)</h3>
+                    <p class="text-sm text-textDim mt-1">사용자 자료 기반 객관식/주관식 모의고사 생성 서비스 개발 (27팀 중 5등).</p>
+                </div>
+                <div class="relative pl-6">
+                    <div class="absolute w-4 h-4 bg-card border-2 border-borderHighlight rounded-full -left-[9px] top-1"></div>
+                    <h3 class="font-bold text-textMain text-md">한성대학교 컴퓨터공학부 졸업</h3>
+                    <p class="text-sm text-textDim mt-1">컴퓨터 과학의 기초를 다지며, 개발자로서의 비전을 확립 (GPA 3.52 / 4.5).</p>
+                </div>
+            </div>
+        </section>
     </main>
 
+    <!-- Easter Egg Modal -->
+    <div id="easter-egg-modal" class="fixed inset-0 bg-black/80 flex justify-center items-center z-[100] hidden backdrop-blur-sm">
+        <div class="bg-gradient-to-br from-yellow-500 to-yellow-700 p-1 rounded-xl shadow-[0_0_50px_rgba(234,179,8,0.5)] transform scale-90 transition-transform duration-300" id="easter-modal-content">
+            <div class="bg-black p-8 rounded-lg text-center">
+                <div class="text-5xl mb-4">🏆</div>
+                <h2 class="text-2xl font-bold text-white mb-2 tracking-widest">WORLD CLASS POTENTIAL</h2>
+                <p class="text-yellow-400 text-sm mb-6">스카우터의 집요함이 숨겨진 재능을 발견했습니다!<br>유현서 선수의 잠재력은 월드클래스입니다.</p>
+                <button onclick="document.getElementById('easter-egg-modal').classList.add('hidden')" class="px-6 py-2 bg-yellow-500 text-black font-bold rounded hover:bg-yellow-400 transition">확인</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // 스크롤 진행률 표시 로직
+        // Scroll Progress
         window.addEventListener('scroll', () => {
-            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrolled = (winScroll / height) * 100;
+            const scrolled = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
             document.getElementById('scroll-progress').style.width = scrolled + '%';
         });
+
+        // Theme Toggle
+        const themeBtn = document.getElementById('theme-toggle');
+        const updateThemeIcon = (isDark) => themeBtn.textContent = isDark ? '☀️' : '🌙';
+        
+        themeBtn.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            updateThemeIcon(isDark);
+        });
+        
+        // Initial Theme Load
+        if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.classList.remove('dark');
+            updateThemeIcon(false);
+        }
+
+        // Easter Egg Logic
+        let clicks = 0;
+        let lastClickTime = 0;
+        document.getElementById('profile-img').addEventListener('click', () => {
+            const now = new Date().getTime();
+            if (now - lastClickTime > 1000) clicks = 0; // 1초 지나면 초기화
+            clicks++;
+            lastClickTime = now;
+            
+            if (clicks === 5) {
+                const modal = document.getElementById('easter-egg-modal');
+                modal.classList.remove('hidden');
+                setTimeout(() => document.getElementById('easter-modal-content').classList.remove('scale-90'), 50);
+                clicks = 0;
+            }
+        });
+
+        // Particle Background Canvas
+        const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        
+        let particles = [];
+        for(let i=0; i<50; i++) {
+            particles.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx: (Math.random()-0.5)*0.5, vy: (Math.random()-0.5)*0.5 });
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const isDark = document.documentElement.classList.contains('dark');
+            ctx.fillStyle = isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.3)';
+            ctx.strokeStyle = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)';
+            
+            for(let i=0; i<particles.length; i++) {
+                let p = particles[i];
+                p.x += p.vx; p.y += p.vy;
+                if(p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
+                
+                ctx.beginPath(); ctx.arc(p.x, p.y, 2, 0, Math.PI*2); ctx.fill();
+                
+                for(let j=i+1; j<particles.length; j++) {
+                    let p2 = particles[j];
+                    let dist = Math.sqrt(Math.pow(p.x-p2.x, 2) + Math.pow(p.y-p2.y, 2));
+                    if(dist < 100) { ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y); ctx.stroke(); }
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+        animate();
+        window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
     </script>
 </body>
 </html>
